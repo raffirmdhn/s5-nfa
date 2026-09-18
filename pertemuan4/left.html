@@ -1,0 +1,230 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Content Kiri - Sosmed Teman</title>
+
+    <!-- ====================================================================
+         BOBOT 70%: CSS DI SELURUH PAGE LATIHAN (EXTERNAL CSS)
+         Menghubungkan stylesheet global style.css
+         ==================================================================== -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <!-- ====================================================================
+         BOBOT 30%: CSS DI SEBAGIAN LATIHAN (INTERNAL CSS)
+         Styling spesifik untuk sidebar kiri: kartu kontak teman minimalis
+         ==================================================================== -->
+    <style type="text/css">
+        body.sidebar-left {
+            background-color: #f8fafc;
+            padding: 16px 14px 28px 14px;
+        }
+
+        .sidebar-intro {
+            padding: 10px 4px 16px 4px;
+            margin-bottom: 8px;
+        }
+
+        .friend-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .friend-card {
+            background-color: #ffffff;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-hairline);
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .friend-card:hover {
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-card);
+        }
+
+        .avatar-box {
+            width: 34px;
+            height: 34px;
+            border-radius: var(--radius-sm);
+            background-color: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.82rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 1px solid #e2e8f0;
+        }
+
+        .friend-details {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .friend-name {
+            font-weight: 600;
+            font-size: 0.86rem;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .friend-handle {
+            font-size: 0.76rem;
+            color: #64748b !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: var(--transition);
+        }
+
+        .friend-handle:hover {
+            color: var(--accent-primary) !important;
+            text-decoration: underline;
+        }
+
+        .campus-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .campus-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 11px 14px;
+            background-color: #ffffff;
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-md);
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            text-decoration: none !important;
+            transition: var(--transition);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .campus-link:hover {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+            color: var(--accent-primary) !important;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="sidebar-left">
+
+    <!-- INTRO HEADER SIDEBAR DENGAN HIERARKI EYEBROW -->
+    <div class="sidebar-intro">
+        <span class="eyebrow">Komunitas Mahasiswa</span>
+        <h3 style="font-size: 1.1rem; margin-top: 2px;">Sosmed Teman</h3>
+        <p style="font-size: 0.8rem; margin-top: 4px; color: #64748b;">Daftar teman sekelas STT Terpadu Nurul Fikri.</p>
+    </div>
+
+    <!-- CARD SECTION 1: DAFTAR AKUN TEMAN -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">👥 Kontak Teman</span>
+            <!-- IMPLEMENTASI BOBOT 30%: Inline CSS badge count -->
+            <span class="badge badge-neutral" style="font-size: 0.7rem;">5 Rekan</span>
+        </div>
+        <div class="card-body" style="padding: 14px;">
+            <ul class="friend-list">
+                <!-- TEMAN 1: ERLANGGA -->
+                <li class="friend-card">
+                    <!-- IMPLEMENTASI BOBOT 30%: Inline CSS color accent pada avatar -->
+                    <div class="avatar-box" style="color: #2563eb; background-color: #eff6ff;">E</div>
+                    <div class="friend-details">
+                        <div class="friend-name">Erlangga</div>
+                        <a href="https://www.instagram.com/a.erlangg44/" target="_blank" class="friend-handle">
+                            @a.erlangg44 &raquo;
+                        </a>
+                    </div>
+                </li>
+
+                <!-- TEMAN 2: WILDAN -->
+                <li class="friend-card">
+                    <div class="avatar-box" style="color: #059669; background-color: #ecfdf5;">W</div>
+                    <div class="friend-details">
+                        <div class="friend-name">Wildan</div>
+                        <a href="https://www.instagram.com/gln.lsunn/" target="_blank" class="friend-handle">
+                            @gln.lsunn &raquo;
+                        </a>
+                    </div>
+                </li>
+
+                <!-- TEMAN 3: HAYDAR -->
+                <li class="friend-card">
+                    <div class="avatar-box" style="color: #d97706; background-color: #fffbeb;">H</div>
+                    <div class="friend-details">
+                        <div class="friend-name">Haydar</div>
+                        <a href="https://www.instagram.com/hydarayy/" target="_blank" class="friend-handle">
+                            @hydarayy &raquo;
+                        </a>
+                    </div>
+                </li>
+
+                <!-- TEMAN 4: ADILLA -->
+                <li class="friend-card">
+                    <div class="avatar-box" style="color: #7c3aed; background-color: #f5f3ff;">A</div>
+                    <div class="friend-details">
+                        <div class="friend-name">Adilla</div>
+                        <a href="https://www.instagram.com/alifpdlh_/" target="_blank" class="friend-handle">
+                            @alifpdlh_ &raquo;
+                        </a>
+                    </div>
+                </li>
+
+                <!-- TEMAN 5: IQBAL -->
+                <li class="friend-card">
+                    <div class="avatar-box" style="color: #db2777; background-color: #fdf2f8;">I</div>
+                    <div class="friend-details">
+                        <div class="friend-name">Iqbal</div>
+                        <a href="https://www.instagram.com/i.qbaa.ll/" target="_blank" class="friend-handle">
+                            @i.qbaa.ll &raquo;
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- CARD SECTION 2: TAUTAN KAMPUS -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">🏫 Tautan Kampus</span>
+        </div>
+        <div class="card-body" style="padding: 14px;">
+            <ul class="campus-list">
+                <li>
+                    <a href="https://nurulfikri.ac.id" target="_blank" class="campus-link">
+                        <span>🌐 Website STTNF</span>
+                        <span style="color: #94a3b8; font-size: 0.9rem;">&rsaquo;</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://elena.nurulfikri.ac.id" target="_blank" class="campus-link">
+                        <span>📚 LMS Elena STTNF</span>
+                        <span style="color: #94a3b8; font-size: 0.9rem;">&rsaquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>

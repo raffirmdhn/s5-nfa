@@ -1,0 +1,303 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Gallery - Kumpulan Gambar Teknologi</title>
+
+    <!-- ====================================================================
+         BOBOT 70%: CSS DI SELURUH PAGE LATIHAN (EXTERNAL CSS)
+         Menghubungkan stylesheet global style.css
+         ==================================================================== -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <!-- ====================================================================
+         BOBOT 30%: CSS DI SEBAGIAN LATIHAN (INTERNAL CSS)
+         Styling spesifik untuk galeri: CSS Grid minimalis, kartu teknologi
+         ==================================================================== -->
+    <style type="text/css">
+        .marquee-wrapper {
+            background-color: #ffffff;
+            border-radius: var(--radius-md);
+            padding: 18px 12px;
+            border: 1px solid var(--border-hairline);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .marquee-logo-card {
+            display: inline-block;
+            margin: 0 14px;
+            padding: 10px 16px;
+            background-color: #ffffff;
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            vertical-align: middle;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .marquee-logo-card:hover {
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-card);
+        }
+
+        .marquee-logo-card img {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* GRID KATALOG DENGAN WHITESPACE LAPANG */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 24px;
+            margin-top: 4px;
+        }
+
+        .tech-card {
+            background-color: #ffffff;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-hairline);
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: var(--shadow-subtle);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .tech-card:hover {
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .tech-img-box {
+            width: 96px;
+            height: 96px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            background-color: #fafbfc;
+            border-radius: var(--radius-md);
+            padding: 12px;
+            border: 1px solid var(--border-hairline);
+            transition: var(--transition);
+        }
+
+        .tech-card:hover .tech-img-box {
+            background-color: #f1f5f9;
+            transform: scale(1.04);
+        }
+
+        .tech-img-box img {
+            max-width: 72px;
+            max-height: 72px;
+            object-fit: contain;
+        }
+
+        .tech-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .tech-desc {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-bottom: 18px;
+            line-height: 1.55;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ANCHOR TOP -->
+    <a name="top" id="top"></a>
+
+    <div class="container">
+
+        <!-- HEADER HALAMAN DENGAN WHITESPACE -->
+        <div class="page-header">
+            <span class="eyebrow">Ekosistem Fullstack</span>
+            <h2>GALLERY : TEKNOLOGI WEB DEVELOPMENT</h2>
+            <p class="page-subtitle">Koleksi Logo &amp; Direktori Dokumentasi Resmi Teknologi Web Modern &bull; <i>Klik gambar untuk membuka dokumentasi</i></p>
+            
+            <div class="jump-nav">
+                <!-- IMPLEMENTASI BOBOT 30%: Inline CSS dot indicator -->
+                <a href="#slideshow" class="jump-btn">
+                    <span style="color: #2563eb;">&bull;</span> Slideshow Berjalan
+                </a>
+                <a href="#katalog" class="jump-btn">
+                    <span style="color: #059669;">&bull;</span> Katalog Kartu Grid
+                </a>
+                <a href="home.html" target="main_content" class="jump-btn">
+                    <span style="color: #64748b;">&bull;</span> Kembali ke Beranda
+                </a>
+            </div>
+        </div>
+
+        <!-- ====================================================================
+             SECTION 1: MARQUEE GAMBAR BERJALAN (ID/NAME: SLIDESHOW)
+             ==================================================================== -->
+        <a name="slideshow" id="slideshow"></a>
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">🔄 Slideshow Logo Ekosistem Web</span>
+                <span class="badge badge-neutral">Marquee Interaktif</span>
+            </div>
+            <div class="card-body" style="padding: 16px;">
+                <div class="marquee-wrapper">
+                    <marquee behavior="alternate" direction="left" scrollamount="4" onmouseover="this.stop();" onmouseout="this.start();">
+                        <!-- ITEM 1: HTML5 -->
+                        <div class="marquee-logo-card">
+                            <a href="https://www.w3schools.com/html/" target="_blank" title="Dokumentasi HTML5">
+                                <img src="images/html5.png" alt="HTML5">
+                            </a>
+                        </div>
+
+                        <!-- ITEM 2: CSS3 -->
+                        <div class="marquee-logo-card">
+                            <a href="https://www.w3schools.com/css/" target="_blank" title="Dokumentasi CSS3">
+                                <img src="images/css3.png" alt="CSS3">
+                            </a>
+                        </div>
+
+                        <!-- ITEM 3: JAVASCRIPT -->
+                        <div class="marquee-logo-card">
+                            <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" title="Dokumentasi MDN JavaScript">
+                                <img src="images/javascript.png" alt="JavaScript">
+                            </a>
+                        </div>
+
+                        <!-- ITEM 4: NODE.JS -->
+                        <div class="marquee-logo-card">
+                            <a href="https://nodejs.org/" target="_blank" title="Dokumentasi Node.js">
+                                <img src="images/nodejs.png" alt="Node.js">
+                            </a>
+                        </div>
+
+                        <!-- ITEM 5: REACT.JS -->
+                        <div class="marquee-logo-card">
+                            <a href="https://react.dev/" target="_blank" title="Dokumentasi React.js">
+                                <img src="images/react.png" alt="React.js">
+                            </a>
+                        </div>
+
+                        <!-- ITEM 6: DATABASE -->
+                        <div class="marquee-logo-card">
+                            <a href="https://www.postgresql.org/" target="_blank" title="Dokumentasi PostgreSQL">
+                                <img src="images/database.png" alt="Database">
+                            </a>
+                        </div>
+                    </marquee>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====================================================================
+             SECTION 2: KATALOG KARTU GRID (ID/NAME: KATALOG)
+             ==================================================================== -->
+        <a name="katalog" id="katalog"></a>
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">📦 Katalog Dokumentasi Resmi Teknologi Web</span>
+                <span class="badge badge-neutral">6 Modul</span>
+            </div>
+            <div class="card-body">
+                <div class="tech-grid">
+
+                    <!-- KARTU 1: HTML5 -->
+                    <div class="tech-card">
+                        <a href="https://www.w3schools.com/html/" target="_blank" class="tech-img-box" title="Buka W3Schools HTML">
+                            <img src="images/html5.png" alt="HTML5 Logo">
+                        </a>
+                        <div class="tech-title">HTML 5</div>
+                        <div class="tech-desc">Standar markup universal penyusun kerangka dan struktur konten web.</div>
+                        <a href="https://www.w3schools.com/html/" target="_blank" class="btn btn-outline" style="width: 100%;">
+                            <span>W3Schools Tutorial</span> &rsaquo;
+                        </a>
+                    </div>
+
+                    <!-- KARTU 2: CSS3 -->
+                    <div class="tech-card">
+                        <a href="https://www.w3schools.com/css/" target="_blank" class="tech-img-box" title="Buka W3Schools CSS">
+                            <img src="images/css3.png" alt="CSS3 Logo">
+                        </a>
+                        <div class="tech-title">CSS 3</div>
+                        <div class="tech-desc">Styling tata letak, warna, tipografi, dan animasi visual antarmuka web.</div>
+                        <a href="https://www.w3schools.com/css/" target="_blank" class="btn btn-outline" style="width: 100%;">
+                            <span>W3Schools Tutorial</span> &rsaquo;
+                        </a>
+                    </div>
+
+                    <!-- KARTU 3: JAVASCRIPT -->
+                    <div class="tech-card">
+                        <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" class="tech-img-box" title="Buka MDN JS">
+                            <img src="images/javascript.png" alt="JavaScript Logo">
+                        </a>
+                        <div class="tech-title">JavaScript</div>
+                        <div class="tech-desc">Bahasa pemrograman dinamis untuk logika interaktif di sisi web browser.</div>
+                        <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" class="btn btn-outline" style="width: 100%;">
+                            <span>MDN Web Docs</span> &rsaquo;
+                        </a>
+                    </div>
+
+                    <!-- KARTU 4: NODE.JS -->
+                    <div class="tech-card">
+                        <a href="https://nodejs.org/" target="_blank" class="tech-img-box" title="Buka Node.js">
+                            <img src="images/nodejs.png" alt="Node.js Logo">
+                        </a>
+                        <div class="tech-title">Node.js</div>
+                        <div class="tech-desc">Runtime JavaScript asynchronous berbasis engine V8 untuk server backend.</div>
+                        <a href="https://nodejs.org/" target="_blank" class="btn btn-outline" style="width: 100%;">
+                            <span>Node.js Docs</span> &rsaquo;
+                        </a>
+                    </div>
+
+                    <!-- KARTU 5: REACT.JS -->
+                    <div class="tech-card">
+                        <a href="https://react.dev/" target="_blank" class="tech-img-box" title="Buka React.dev">
+                            <img src="images/react.png" alt="React.js Logo">
+                        </a>
+                        <div class="tech-title">React.js</div>
+                        <div class="tech-desc">Library komponen deklaratif untuk membangun Single Page Application.</div>
+                        <a href="https://react.dev/" target="_blank" class="btn btn-outline" style="width: 100%;">
+                            <span>React.dev Learn</span> &rsaquo;
+                        </a>
+                    </div>
+
+                    <!-- KARTU 6: DATABASE -->
+                    <div class="tech-card">
+                        <a href="https://www.postgresql.org/" target="_blank" class="tech-img-box" title="Buka PostgreSQL">
+                            <img src="images/database.png" alt="Database Logo">
+                        </a>
+                        <div class="tech-title">PostgreSQL</div>
+                        <div class="tech-desc">Sistem basis data relasional open-source tingkat enterprise yang handal.</div>
+                        <a href="https://www.postgresql.org/" target="_blank" class="btn btn-outline" style="width: 100%;">
+                            <span>PostgreSQL Docs</span> &rsaquo;
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER NAVIGASI ANCHOR -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; margin-bottom: 2.5rem;">
+            <a href="home.html" target="main_content" class="btn btn-outline">
+                &lsaquo; <span>Kembali ke Beranda (Home)</span>
+            </a>
+            <a href="#top" class="back-to-top">⬆️ Kembali ke Atas</a>
+        </div>
+
+    </div>
+
+</body>
+</html>

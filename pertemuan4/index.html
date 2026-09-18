@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Tugas 4 - Penataan Web Portal CSS3 Modern Minimalis | Raffi Ramadhan</title>
+
+    <!--
+    ==========================================================================
+    TUGAS 4 PEMROGRAMAN WEB: PENATAAN DENGAN CSS3 (MODERN MINIMALIS)
+    Mahasiswa  : Raffi Ramadhan
+    NIM        : 0110224204
+    Kampus     : STT Terpadu Nurul Fikri
+    
+    BOBOT PENILAIAN:
+    1. CSS diseluruh page latihan (Bobot 70%):
+       External CSS (style.css) terhubung di seluruh halaman web portal.
+    2. CSS disebagian latihan (Bobot 30%):
+       Internal CSS (<style>) & Inline CSS (style="...") pada elemen spesifik.
+    ==========================================================================
+    -->
+</head>
+
+<!-- STRUKTUR FRAMESET DENGAN PEMBATAS SUBTLE MINIMALIS (#e2e8f0) -->
+<frameset rows="125,50,*,48" frameborder="1" border="1" bordercolor="#e2e8f0">
+
+    <!-- FRAME 1: HEADER (BANNER WEB & MARQUEE MINIMALIS) -->
+    <frame src="header.html" name="header_frame" scrolling="no" noresize marginwidth="0" marginheight="0">
+
+    <!-- FRAME 2: NAVIGATION MENU BAR (CLEAN MINIMALIST BAR) -->
+    <frame src="menu.html" name="menu_frame" scrolling="no" noresize marginwidth="0" marginheight="0">
+
+    <!-- FRAME 3: KONTEN 3 KOLOM DENGAN RUANG LAPANG -->
+    <frameset cols="24%,*,24%" frameborder="1" border="1" bordercolor="#e2e8f0">
+        <!-- FRAME KIRI: SOSMED TEMAN & TAUTAN KAMPUS -->
+        <frame src="left.html" name="left_frame" scrolling="auto" marginwidth="14" marginheight="14">
+
+        <!-- FRAME UTAMA: BERANDA, STUDI, GALERI -->
+        <frame src="home.html" name="main_content" scrolling="auto" marginwidth="20" marginheight="20">
+
+        <!-- FRAME KANAN: MATERI FULLSTACK & TOOLS -->
+        <frame src="right.html" name="right_frame" scrolling="auto" marginwidth="14" marginheight="14">
+    </frameset>
+
+    <!-- FRAME 4: FOOTER (MINIMALIST FOOTER INFO) -->
+    <frame src="footer.html" name="footer_frame" scrolling="no" noresize marginwidth="0" marginheight="0">
+
+    <noframes>
+        <body>
+            <p>Browser Anda tidak mendukung Frameset HTML. Silakan akses halaman utama di <a href="home.html">home.html</a>.</p>
+        </body>
+    </noframes>
+
+</frameset>
+</html>

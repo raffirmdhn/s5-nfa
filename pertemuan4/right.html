@@ -1,0 +1,252 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Content Kanan - Materi Fullstack</title>
+
+    <!-- ====================================================================
+         BOBOT 70%: CSS DI SELURUH PAGE LATIHAN (EXTERNAL CSS)
+         Menghubungkan stylesheet global style.css
+         ==================================================================== -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <!-- ====================================================================
+         BOBOT 30%: CSS DI SEBAGIAN LATIHAN (INTERNAL CSS)
+         Styling spesifik untuk sidebar kanan: roadmap materi modern minimalis
+         ==================================================================== -->
+    <style type="text/css">
+        body.sidebar-right {
+            background-color: #f8fafc;
+            padding: 16px 14px 28px 14px;
+        }
+
+        .sidebar-intro {
+            padding: 10px 4px 16px 4px;
+            margin-bottom: 8px;
+        }
+
+        .roadmap-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .roadmap-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            transition: var(--transition);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .roadmap-card:hover {
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-card);
+        }
+
+        .roadmap-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .step-pill {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: var(--radius-full);
+            background-color: #f1f5f9;
+            color: #475569;
+            letter-spacing: 0.04em;
+        }
+
+        .roadmap-title {
+            font-weight: 600;
+            font-size: 0.86rem;
+            color: var(--text-primary);
+        }
+
+        .roadmap-desc {
+            font-size: 0.76rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            margin-bottom: 6px;
+        }
+
+        .roadmap-link {
+            font-size: 0.74rem;
+            font-weight: 500;
+            color: var(--accent-primary) !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .roadmap-link:hover {
+            text-decoration: underline;
+        }
+
+        .tools-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .tool-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 11px 14px;
+            background-color: #ffffff;
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-md);
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            text-decoration: none !important;
+            transition: var(--transition);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .tool-item:hover {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+            color: var(--accent-primary) !important;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body class="sidebar-right">
+
+    <!-- INTRO HEADER SIDEBAR -->
+    <div class="sidebar-intro">
+        <span class="eyebrow">Kurikulum Mandiri</span>
+        <h3 style="font-size: 1.1rem; margin-top: 2px;">Materi Fullstack</h3>
+        <p style="font-size: 0.8rem; margin-top: 4px; color: #64748b;">Referensi roadmap modern web development.</p>
+    </div>
+
+    <!-- CARD SECTION 1: ROADMAP BELAJAR -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">📚 Roadmap Web Dev</span>
+            <!-- IMPLEMENTASI BOBOT 30%: Inline CSS badge status -->
+            <span class="badge badge-neutral" style="font-size: 0.7rem;">6 Materi</span>
+        </div>
+        <div class="card-body" style="padding: 14px;">
+            <ul class="roadmap-list">
+                <!-- MATERI 1 -->
+                <li class="roadmap-card">
+                    <div class="roadmap-header">
+                        <span class="roadmap-title">HTML &amp; CSS Dasar</span>
+                        <!-- IMPLEMENTASI BOBOT 30%: Inline CSS color pill -->
+                        <span class="step-pill" style="background-color: #eff6ff; color: #2563eb;">01</span>
+                    </div>
+                    <div class="roadmap-desc">Pondasi struktur markup dan visual styling web.</div>
+                    <a href="https://www.w3schools.com/html/" target="_blank" class="roadmap-link">
+                        W3Schools Guide &raquo;
+                    </a>
+                </li>
+
+                <!-- MATERI 2 -->
+                <li class="roadmap-card">
+                    <div class="roadmap-header">
+                        <span class="roadmap-title">JavaScript Modern</span>
+                        <span class="step-pill">02</span>
+                    </div>
+                    <div class="roadmap-desc">Pemrograman dinamis logika interaktif browser.</div>
+                    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" class="roadmap-link">
+                        MDN Documentation &raquo;
+                    </a>
+                </li>
+
+                <!-- MATERI 3 -->
+                <li class="roadmap-card">
+                    <div class="roadmap-header">
+                        <span class="roadmap-title">Node.js &amp; Express</span>
+                        <span class="step-pill">03</span>
+                    </div>
+                    <div class="roadmap-desc">Runtime backend server-side &amp; RESTful API.</div>
+                    <a href="https://nodejs.org/en/docs" target="_blank" class="roadmap-link">
+                        Node.js Docs &raquo;
+                    </a>
+                </li>
+
+                <!-- MATERI 4 -->
+                <li class="roadmap-card">
+                    <div class="roadmap-header">
+                        <span class="roadmap-title">React.js Frontend</span>
+                        <span class="step-pill">04</span>
+                    </div>
+                    <div class="roadmap-desc">Library berbasis komponen untuk Single Page App.</div>
+                    <a href="https://react.dev/learn" target="_blank" class="roadmap-link">
+                        React.dev Learn &raquo;
+                    </a>
+                </li>
+
+                <!-- MATERI 5 -->
+                <li class="roadmap-card">
+                    <div class="roadmap-header">
+                        <span class="roadmap-title">Database PostgreSQL</span>
+                        <span class="step-pill">05</span>
+                    </div>
+                    <div class="roadmap-desc">Manajemen relational database dan query SQL.</div>
+                    <a href="https://www.postgresqltutorial.com/" target="_blank" class="roadmap-link">
+                        PostgreSQL Tutorial &raquo;
+                    </a>
+                </li>
+
+                <!-- MATERI 6 -->
+                <li class="roadmap-card">
+                    <div class="roadmap-header">
+                        <span class="roadmap-title">Full Stack Open</span>
+                        <span class="step-pill">06</span>
+                    </div>
+                    <div class="roadmap-desc">Kurikulum lengkap modern web development.</div>
+                    <a href="https://fullstackopen.com/en/" target="_blank" class="roadmap-link">
+                        Uni of Helsinki &raquo;
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- CARD SECTION 2: DEVELOPER TOOLS -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">🛠️ Tools Developer</span>
+        </div>
+        <div class="card-body" style="padding: 14px;">
+            <ul class="tools-list">
+                <li>
+                    <a href="https://git-scm.com/doc" target="_blank" class="tool-item">
+                        <span>🐙 Git SCM Documentation</span>
+                        <span style="color: #94a3b8; font-size: 0.9rem;">&rsaquo;</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com" target="_blank" class="tool-item">
+                        <span>💻 GitHub Repository</span>
+                        <span style="color: #94a3b8; font-size: 0.9rem;">&rsaquo;</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://code.visualstudio.com" target="_blank" class="tool-item">
+                        <span>⚡ VS Code Editor</span>
+                        <span style="color: #94a3b8; font-size: 0.9rem;">&rsaquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>
