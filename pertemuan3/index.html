@@ -4,28 +4,16 @@
     <title>Tugas 3 - Web Portal Frameset | Raffi Ramadhan - STT Terpadu Nurul Fikri</title>
 </head>
 
-<!-- PENGATURAN FRAMESET ROWS (HEADER, MENU, CONTENT TENGAH, FOOTER) -->
 <frameset rows="130,45,*,60" frameborder="1" border="2">
-
-    <!-- FRAME 1: HEADER (BANNER WEB) -->
     <frame src="header.html" name="header_frame" scrolling="no" noresize>
-
-    <!-- FRAME 2: NAVIGATION MENU (LINK INTERNAL) -->
     <frame src="menu.html" name="menu_frame" scrolling="no" noresize>
 
-    <!-- FRAME 3: KONTEN TENGAH DENGAN FRAMESET COLS (KIRI, UTAMA, KANAN) -->
     <frameset cols="22%,*,22%" frameborder="1" border="2">
-        <!-- FRAME CONTENT KIRI: SOSMED TEMAN -->
         <frame src="left.html" name="left_frame" scrolling="auto">
-
-        <!-- FRAME MAIN CONTENT: TARGET UTAMA UNTUK LINK INTERNAL -->
         <frame src="home.html" name="main_content" scrolling="auto">
-
-        <!-- FRAME CONTENT KANAN: MATERI FULLSTACK -->
         <frame src="right.html" name="right_frame" scrolling="auto">
     </frameset>
 
-    <!-- FRAME 4: FOOTER (TENTANG PEMBUAT HALAMAN) -->
     <frame src="footer.html" name="footer_frame" scrolling="no" noresize>
 
     <noframes>
@@ -33,6 +21,5 @@
             <p>Maaf, browser Anda tidak mendukung tampilan HTML Frameset.</p>
         </body>
     </noframes>
-
 </frameset>
 </html>

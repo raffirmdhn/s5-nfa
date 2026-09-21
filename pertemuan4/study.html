@@ -3,17 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>MyStudy - Riwayat Pendidikan</title>
-
-    <!-- ====================================================================
-         BOBOT 70%: CSS DI SELURUH PAGE LATIHAN (EXTERNAL CSS)
-         Menghubungkan stylesheet global style.css
-         ==================================================================== -->
     <link rel="stylesheet" type="text/css" href="style.css">
-
-    <!-- ====================================================================
-         BOBOT 30%: CSS DI SEBAGIAN LATIHAN (INTERNAL CSS)
-         Styling spesifik untuk tabel riwayat pendidikan modern minimalis
-         ==================================================================== -->
     <style type="text/css">
         .cert-btn {
             display: inline-flex;
@@ -41,19 +31,16 @@
 </head>
 <body>
 
-    <!-- ANCHOR TOP -->
     <a name="top" id="top"></a>
 
     <div class="container">
 
-        <!-- HEADER HALAMAN DENGAN WHITESPACE & HIERARKI -->
         <div class="page-header">
             <span class="eyebrow">Rekam Jejak Akademis</span>
             <h2>MY STUDY : RIWAYAT PENDIDIKAN</h2>
             <p class="page-subtitle">Daftar Rekam Jejak Pendidikan Formal &amp; Pelatihan Non-Formal &bull; Raffi Ramadhan</p>
             
             <div class="jump-nav">
-                <!-- IMPLEMENTASI BOBOT 30%: Inline CSS dot indicator -->
                 <a href="#formal" class="jump-btn">
                     <span style="color: #2563eb;">&bull;</span> Pendidikan Formal
                 </a>
@@ -66,9 +53,6 @@
             </div>
         </div>
 
-        <!-- ====================================================================
-             SECTION 1: PENDIDIKAN FORMAL (ID/NAME: FORMAL)
-             ==================================================================== -->
         <a name="formal" id="formal"></a>
         <div class="card">
             <div class="card-header">
@@ -89,8 +73,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- BARIS 1: S1 STTNF -->
-                            <!-- IMPLEMENTASI BOBOT 30%: Inline CSS row active highlight -->
                             <tr style="background-color: #fafbfc;">
                                 <td style="text-align: center; font-weight: 700; color: #2563eb;">1</td>
                                 <td><strong style="color: #0f172a;">Strata 1 (S1)</strong></td>
@@ -101,7 +83,6 @@
                                     <span class="badge badge-success">● Mahasiswa Aktif</span>
                                 </td>
                             </tr>
-                            <!-- BARIS 2: SMA/SMK -->
                             <tr>
                                 <td style="text-align: center; color: #64748b;">2</td>
                                 <td><strong>SMA / SMK</strong></td>
@@ -112,7 +93,6 @@
                                     <span class="badge badge-neutral">Lulus</span>
                                 </td>
                             </tr>
-                            <!-- BARIS 3: SMP -->
                             <tr>
                                 <td style="text-align: center; color: #64748b;">3</td>
                                 <td><strong>SMP</strong></td>
@@ -123,7 +103,6 @@
                                     <span class="badge badge-neutral">Lulus</span>
                                 </td>
                             </tr>
-                            <!-- BARIS 4: SD -->
                             <tr>
                                 <td style="text-align: center; color: #64748b;">4</td>
                                 <td><strong>SD</strong></td>
@@ -140,9 +119,6 @@
             </div>
         </div>
 
-        <!-- ====================================================================
-             SECTION 2: PELATIHAN & KURSUS (ID/NAME: NONFORMAL)
-             ==================================================================== -->
         <a name="nonformal" id="nonformal"></a>
         <div class="card">
             <div class="card-header">
@@ -162,7 +138,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- ITEM 1 -->
                             <tr>
                                 <td style="text-align: center; color: #64748b;">1</td>
                                 <td><strong>Dasar Pemrograman Web (HTML &amp; CSS)</strong></td>
@@ -174,7 +149,6 @@
                                     </a>
                                 </td>
                             </tr>
-                            <!-- ITEM 2 -->
                             <tr>
                                 <td style="text-align: center; color: #64748b;">2</td>
                                 <td><strong>Fundamental Linux &amp; Command Line</strong></td>
@@ -186,7 +160,6 @@
                                     </a>
                                 </td>
                             </tr>
-                            <!-- ITEM 3 -->
                             <tr>
                                 <td style="text-align: center; color: #64748b;">3</td>
                                 <td><strong>JavaScript Algorithms &amp; Data Structures</strong></td>
@@ -204,7 +177,6 @@
             </div>
         </div>
 
-        <!-- FOOTER NAVIGASI ANCHOR -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; margin-bottom: 2.5rem;">
             <a href="gallery.html" target="main_content" class="btn btn-outline">
                 <span>🖼️ Lanjut ke Halaman Galeri</span> &rsaquo;

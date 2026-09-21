@@ -3,17 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Home - Personal Profile</title>
-
-    <!-- ====================================================================
-         BOBOT 70%: CSS DI SELURUH PAGE LATIHAN (EXTERNAL CSS)
-         Menghubungkan stylesheet global style.css
-         ==================================================================== -->
     <link rel="stylesheet" type="text/css" href="style.css">
-
-    <!-- ====================================================================
-         BOBOT 30%: CSS DI SEBAGIAN LATIHAN (INTERNAL CSS)
-         Styling spesifik untuk profil mahasiswa: whitespace lapang & hierarki UI
-         ==================================================================== -->
     <style type="text/css">
         .profile-container {
             display: flex;
@@ -83,7 +73,6 @@
             color: var(--text-primary);
         }
 
-        /* CHIP KEAHLIAN MINIMALIS */
         .skills-grid {
             display: flex;
             flex-wrap: wrap;
@@ -112,7 +101,6 @@
             transform: translateY(-1px);
         }
 
-        /* GRID KONTAK DENGAN WHITESPACE LAPANG */
         .contact-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -155,19 +143,16 @@
 </head>
 <body>
 
-    <!-- ANCHOR TOP -->
     <a name="top" id="top"></a>
 
     <div class="container">
 
-        <!-- HEADER HALAMAN DENGAN WHITESPACE DAN HIERARKI YANG JELAS -->
         <div class="page-header">
             <span class="eyebrow">Profil Mahasiswa</span>
             <h2>PERSONAL PROFILE &amp; BIODATA</h2>
             <p class="page-subtitle">Portal Informasi Resmi Mahasiswa Strata 1 &bull; STT Terpadu Nurul Fikri</p>
             
             <div class="jump-nav">
-                <!-- IMPLEMENTASI BOBOT 30%: Inline CSS dot indicator -->
                 <a href="#profil" class="jump-btn">
                     <span style="color: #2563eb;">&bull;</span> Data Pribadi
                 </a>
@@ -180,9 +165,6 @@
             </div>
         </div>
 
-        <!-- ====================================================================
-             SECTION 1: DATA PRIBADI & FOTO (ID/NAME: PROFIL)
-             ==================================================================== -->
         <a name="profil" id="profil"></a>
         <div class="card">
             <div class="card-header">
@@ -191,17 +173,14 @@
             </div>
             <div class="card-body">
                 <div class="profile-container">
-                    <!-- FOTO PROFIL DENGAN LINK UKURAN PENUH -->
                     <div class="avatar-section">
                         <a href="images/profile.png" target="_blank" class="avatar-img-link" title="Klik foto untuk melihat ukuran penuh">
                             <img src="images/profile.png" alt="Foto Profil Mahasiswa" class="avatar-img">
                         </a>
                         <h4 style="margin-top: 12px; margin-bottom: 2px;">Raffi Ramadhan</h4>
-                        <!-- IMPLEMENTASI BOBOT 30%: Inline CSS muted text -->
                         <span style="font-size: 0.76rem; color: #64748b; font-weight: 500;">Mahasiswa S1 TI</span>
                     </div>
 
-                    <!-- TABEL DETAIL BIODATA -->
                     <div style="flex-grow: 1;">
                         <table class="bio-table">
                             <tr>
@@ -242,9 +221,6 @@
             </div>
         </div>
 
-        <!-- ====================================================================
-             SECTION 2: KEAHLIAN & MINAT STUDI (ID/NAME: KEAHLIAN)
-             ==================================================================== -->
         <a name="keahlian" id="keahlian"></a>
         <div class="card">
             <div class="card-header">
@@ -253,7 +229,6 @@
             </div>
             <div class="card-body">
                 <div style="display: flex; flex-wrap: wrap; gap: 32px;">
-                    <!-- KOLOM 1: CHIPS KEAHLIAN -->
                     <div style="flex: 1; min-width: 290px;">
                         <h4 style="margin-bottom: 6px;">Kompetensi Teknologi:</h4>
                         <p style="font-size: 0.84rem; color: #64748b; margin-bottom: 8px;">Teknologi dan tools yang dipelajari dan dikembangkan.</p>
@@ -272,12 +247,10 @@
                         </div>
                     </div>
 
-                    <!-- KOLOM 2: RINGKASAN PROFIL -->
                     <div style="flex: 1; min-width: 290px;">
                         <h4 style="margin-bottom: 6px;">Ringkasan Minat:</h4>
                         <p style="font-size: 0.84rem; color: #64748b; margin-bottom: 12px;">Fokus karir dan tujuan profesional.</p>
                         
-                        <!-- IMPLEMENTASI BOBOT 30%: Inline CSS minimal callout border -->
                         <div style="border-left: 3px solid #2563eb; padding: 14px 18px; background-color: #fafbfc; border-radius: 0 8px 8px 0;">
                             <p style="font-size: 0.92rem; color: #334155; line-height: 1.7; margin: 0; text-align: justify;">
                                 Saya adalah mahasiswa semester 5 di Sekolah Tinggi Teknologi Terpadu Nurul Fikri dengan komitmen tinggi pada pengembangan web modern. Fokus utama saya adalah menjadi seorang <strong>Full Stack Web Developer</strong> yang adaptif, mampu merancang arsitektur web yang fungsional, berkinerja tinggi, dan ramah pengguna.
@@ -288,9 +261,6 @@
             </div>
         </div>
 
-        <!-- ====================================================================
-             SECTION 3: KONTAK & TAUTAN (ID/NAME: KONTAK)
-             ==================================================================== -->
         <a name="kontak" id="kontak"></a>
         <div class="card">
             <div class="card-header">
@@ -303,17 +273,14 @@
                 </p>
 
                 <div class="contact-grid">
-                    <!-- EMAIL -->
                     <a href="mailto:klsterbuka@gmail.com" class="contact-card">
                         <div class="contact-icon-box" style="color: #dc2626;">✉️</div>
                         <div>
                             <div style="font-weight: 600; font-size: 0.88rem; color: #0f172a;">Email Mahasiswa</div>
-                            <!-- IMPLEMENTASI BOBOT 30%: Inline CSS detail color -->
                             <div style="font-size: 0.8rem; color: #64748b;">klsterbuka@gmail.com</div>
                         </div>
                     </a>
 
-                    <!-- GITHUB -->
                     <a href="https://github.com/RaffiRmdhn" target="_blank" class="contact-card">
                         <div class="contact-icon-box" style="color: #0f172a;">🐙</div>
                         <div>
@@ -322,7 +289,6 @@
                         </div>
                     </a>
 
-                    <!-- RIWAYAT PENDIDIKAN -->
                     <a href="study.html" target="main_content" class="contact-card">
                         <div class="contact-icon-box" style="color: #059669;">🎓</div>
                         <div>
@@ -331,7 +297,6 @@
                         </div>
                     </a>
 
-                    <!-- GALERI GAMBAR -->
                     <a href="gallery.html" target="main_content" class="contact-card">
                         <div class="contact-icon-box" style="color: #d97706;">🖼️</div>
                         <div>
@@ -343,7 +308,6 @@
             </div>
         </div>
 
-        <!-- TOMBOL KEMBALI KE ATAS -->
         <div style="text-align: right; margin-top: 1rem; margin-bottom: 2rem;">
             <a href="#top" class="back-to-top">⬆️ Kembali ke Atas Halaman</a>
         </div>

@@ -3,20 +3,10 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Header - Web Portal</title>
-
-    <!-- ====================================================================
-         BOBOT 70%: CSS DI SELURUH PAGE LATIHAN (EXTERNAL CSS)
-         Menghubungkan stylesheet global style.css
-         ==================================================================== -->
     <link rel="stylesheet" type="text/css" href="style.css">
-
-    <!-- ====================================================================
-         BOBOT 30%: CSS DI SEBAGIAN LATIHAN (INTERNAL CSS)
-         Styling spesifik untuk header modern minimalis (light theme & whitespace)
-         ==================================================================== -->
     <style type="text/css">
         body.header-body {
-            background-color: #ffffff; /* Latar bersih putih minimalis */
+            background-color: #ffffff;
             margin: 0;
             padding: 0;
             overflow: hidden;
@@ -64,7 +54,7 @@
         }
 
         .marquee-bar {
-            background-color: #fafbfc; /* Latar netral abu-abu terang */
+            background-color: #fafbfc;
             border-top: 1px solid #e2e8f0;
             padding: 6px 0;
             font-size: 0.8rem;
@@ -91,9 +81,7 @@
 </head>
 <body class="header-body">
 
-    <!-- BANNER WEB (Hyperlink Gambar ke home.html target main_content) -->
     <div class="banner-container">
-        <!-- IMPLEMENTASI BOBOT 30%: Inline CSS border halus -->
         <a href="home.html" target="main_content" class="banner-link" 
            title="Klik banner untuk kembali ke Beranda (Home)"
            style="border: 1px solid #e2e8f0;">
@@ -101,11 +89,9 @@
         </a>
     </div>
 
-    <!-- TEKS BERJALAN MINIMALIS DENGAN STATUS INDIKATOR & LATAR BERSIH -->
     <div class="marquee-bar">
         <marquee scrollamount="5" behavior="scroll" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
             <span class="status-dot"></span>
-            <!-- IMPLEMENTASI BOBOT 30%: Inline CSS kontras warna teks -->
             <span style="color: #0f172a; font-weight: 600;">PORTAL AKADEMIK STT TERPADU NURUL FIKRI</span>
             <span style="color: #cbd5e1; margin: 0 8px;">&bull;</span>
             <span style="color: #475569;">Praktikum Pemrograman Web &bull; <strong>Pertemuan 4</strong>: Styling CSS3 Modern Minimalis</span>
