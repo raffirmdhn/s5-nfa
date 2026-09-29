@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tugas 1 - Javascript</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 6px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .box {
+            background: #fafafa;
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        h2 {
+            font-size: 16px;
+            color: #222;
+            margin-bottom: 8px;
+        }
+        p {
+            font-size: 14px;
+            margin: 4px 0;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Perhitungan Luas Bangun Datar</h1>
+
+        <div class="box">
+            <h2>1. Persegi Panjang</h2>
+            <p>Panjang: <span id="p-pp"></span> cm</p>
+            <p>Lebar: <span id="l-pp"></span> cm</p>
+            <p><strong>Luas:</strong> <span id="hasil-pp"></span> cm²</p>
+        </div>
+
+        <div class="box">
+            <h2>2. Bujur Sangkar</h2>
+            <p>Sisi: <span id="s-bs"></span> cm</p>
+            <p><strong>Luas:</strong> <span id="hasil-bs"></span> cm²</p>
+        </div>
+
+        <div class="box">
+            <h2>3. Segitiga</h2>
+            <p>Alas: <span id="a-sg"></span> cm</p>
+            <p>Tinggi: <span id="t-sg"></span> cm</p>
+            <p><strong>Luas:</strong> <span id="hasil-sg"></span> cm²</p>
+        </div>
+    </div>
+
+    <script>
+        // Fungsi untuk menghitung luas persegi panjang (panjang * lebar)
+        function hitungLuasPersegiPanjang(panjang, lebar) {
+            return panjang * lebar;
+        }
+
+        // Fungsi untuk menghitung luas bujur sangkar (sisi * sisi)
+        function hitungLuasBujurSangkar(sisi) {
+            return sisi * sisi;
+        }
+
+        // Fungsi untuk menghitung luas segitiga (0.5 * alas * tinggi)
+        function hitungLuasSegitiga(alas, tinggi) {
+            return 0.5 * alas * tinggi;
+        }
+
+        // Deklarasi variabel
+        let panjang = 10;
+        let lebar = 5;
+        let sisi = 8;
+        let alas = 6;
+        let tinggi = 4;
+
+        // Memanggil fungsi perhitungan
+        let luasPersegiPanjang = hitungLuasPersegiPanjang(panjang, lebar);
+        let luasBujurSangkar = hitungLuasBujurSangkar(sisi);
+        let luasSegitiga = hitungLuasSegitiga(alas, tinggi);
+
+        // Menampilkan hasil ke elemen HTML
+        document.getElementById("p-pp").innerText = panjang;
+        document.getElementById("l-pp").innerText = lebar;
+        document.getElementById("hasil-pp").innerText = luasPersegiPanjang;
+
+        document.getElementById("s-bs").innerText = sisi;
+        document.getElementById("hasil-bs").innerText = luasBujurSangkar;
+
+        document.getElementById("a-sg").innerText = alas;
+        document.getElementById("t-sg").innerText = tinggi;
+        document.getElementById("hasil-sg").innerText = luasSegitiga;
+
+        // Menampilkan hasil di console
+        console.log("Luas Persegi Panjang: " + luasPersegiPanjang);
+        console.log("Luas Bujur Sangkar: " + luasBujurSangkar);
+        console.log("Luas Segitiga: " + luasSegitiga);
+    </script>
+</body>
+</html>
