@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tugas 2 - Javascript</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px 10px;
+            text-align: center;
+        }
+
+        thead th {
+            background-color: #2c3e50;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        tfoot th {
+            background-color: #f1f3f5;
+            text-align: right;
+            padding-right: 15px;
+            font-weight: bold;
+        }
+
+        tfoot td {
+            background-color: #eaf2f8;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Data Penggajian Pegawai</h1>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nama Pegawai</th>
+                        <th>Umur</th>
+                        <th>Jabatan</th>
+                        <th>Status</th>
+                        <th>Gaji Pokok</th>
+                        <th>Tunjangan Jabatan</th>
+                        <th>BPJS</th>
+                        <th>Tunjangan Keluarga</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td id="nama"></td>
+                        <td id="umur"></td>
+                        <td id="jabatan"></td>
+                        <td id="status"></td>
+                        <td id="gapok"></td>
+                        <td id="tunj-jabatan"></td>
+                        <td id="bpjs"></td>
+                        <td id="tunj-keluarga"></td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="7">Total Gaji</th>
+                        <td id="total-gaji"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Data Pegawai
+        let nama = "dodi prayodi";
+        let umur = 25;
+        let jabatan = "manajer";
+        let status = "menikah";
+
+        // 1. Menentukan Gaji Pokok berdasarkan Jabatan (if - else if)
+        let gapok = 0;
+        if (jabatan.toLowerCase() === "manajer") {
+            gapok = 15000000;
+        } else if (jabatan.toLowerCase() === "asisten manajer") {
+            gapok = 10000000;
+        } else if (jabatan.toLowerCase() === "staff") {
+            gapok = 5000000;
+        } else {
+            gapok = 0;
+        }
+
+        // 2. Menghitung Tunjangan Jabatan (15% dari gapok)
+        let tunjJabatan = 0.15 * gapok;
+
+        // 3. Menghitung BPJS (10% dari gapok)
+        let bpjs = 0.10 * gapok;
+
+        // 4. Menghitung Tunjangan Keluarga menggunakan ternary operator (20% jika menikah)
+        let tunjKeluarga = (status.toLowerCase() === "menikah") ? 0.20 * gapok : 0;
+
+        // 5. Menghitung Total Gaji (penjumlahan seluruh elemen gaji)
+        let totalGaji = gapok + tunjJabatan + bpjs + tunjKeluarga;
+
+        // Fungsi format mata uang Rupiah
+        function formatRupiah(angka) {
+            return "Rp " + angka.toLocaleString("id-ID");
+        }
+
+        // Menampilkan data ke elemen HTML
+        document.getElementById("nama").innerText = nama;
+        document.getElementById("umur").innerText = umur + " Tahun";
+        document.getElementById("jabatan").innerText = jabatan;
+        document.getElementById("status").innerText = status;
+        document.getElementById("gapok").innerText = formatRupiah(gapok);
+        document.getElementById("tunj-jabatan").innerText = formatRupiah(tunjJabatan);
+        document.getElementById("bpjs").innerText = formatRupiah(bpjs);
+        document.getElementById("tunj-keluarga").innerText = formatRupiah(tunjKeluarga);
+        document.getElementById("total-gaji").innerText = formatRupiah(totalGaji);
+    </script>
+</body>
+</html>
