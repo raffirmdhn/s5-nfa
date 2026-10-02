@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tugas 3 - Javascript</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 25px;
+            color: #2c3e50;
+        }
+
+        .form-section {
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+        }
+
+        .form-section h2 {
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-group input {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #3182ce;
+        }
+
+        .btn-submit {
+            background-color: #2c3e50;
+            color: #ffffff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-submit:hover {
+            background-color: #1a252f;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px 10px;
+            text-align: center;
+        }
+
+        thead th {
+            background-color: #2c3e50;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .btn-delete {
+            background-color: #e53e3e;
+            color: #ffffff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-delete:hover {
+            background-color: #c53030;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #718096;
+            font-style: italic;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sistem Manajemen Produk Toko Online</h1>
+
+        <div class="form-section">
+            <h2>Tambah Produk Baru</h2>
+            <form id="form-tambah-produk">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="input-nama">Nama Produk</label>
+                        <input type="text" id="input-nama" placeholder="Contoh: Monitor" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-harga">Harga (Rp)</label>
+                        <input type="number" id="input-harga" placeholder="Contoh: 1500000" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-stok">Stok</label>
+                        <input type="number" id="input-stok" placeholder="Contoh: 8" min="0" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit">Tambah Produk</button>
+            </form>
+        </div>
+
+        <h2>Daftar Produk Toko</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nama Produk</th>
+                        <th>Harga</th>
+                        <th>Stok</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="tabel-produk-body">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Daftar produk awal toko
+        let produkToko = [
+            { id: 1, nama: "Laptop", harga: 7000000, stok: 5 },
+            { id: 2, nama: "Mouse", harga: 200000, stok: 10 },
+            { id: 3, nama: "Keyboard", harga: 350000, stok: 7 }
+        ];
+
+        // Format mata uang Rupiah
+        function formatRupiah(angka) {
+            return "Rp " + Number(angka).toLocaleString("id-ID");
+        }
+
+        // Fungsi untuk menampilkan daftar produk
+        function tampilkanProduk() {
+            const tbody = document.getElementById("tabel-produk-body");
+            tbody.innerHTML = "";
+
+            if (produkToko.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="empty-message">Tidak ada data produk</td></tr>`;
+                console.log("Daftar Produk: (Kosong)");
+                return;
+            }
+
+            produkToko.forEach(produk => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${produk.id}</td>
+                    <td>${produk.nama}</td>
+                    <td>${formatRupiah(produk.harga)}</td>
+                    <td>${produk.stok}</td>
+                    <td><button class="btn-delete" onclick="hapusProduk(${produk.id})">Hapus</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            console.log("Daftar Produk Toko:", produkToko);
+        }
+
+        // Fungsi untuk menambahkan produk baru
+        function tambahProduk(nama, harga, stok) {
+            const idBaru = produkToko.length > 0 ? Math.max(...produkToko.map(p => p.id)) + 1 : 1;
+            const produkBaru = {
+                id: idBaru,
+                nama: String(nama),
+                harga: Number(harga),
+                stok: Number(stok)
+            };
+
+            produkToko.push(produkBaru);
+            console.log("Produk berhasil ditambahkan:", produkBaru);
+            tampilkanProduk();
+        }
+
+        // Fungsi untuk menghapus produk berdasarkan id
+        function hapusProduk(id) {
+            const index = produkToko.findIndex(p => p.id === id);
+            if (index !== -1) {
+                const produkDihapus = produkToko.splice(index, 1)[0];
+                console.log("Produk berhasil dihapus:", produkDihapus);
+                tampilkanProduk();
+            } else {
+                console.log("Produk dengan ID " + id + " tidak ditemukan.");
+            }
+        }
+
+        // Event listener form tambah produk
+        document.getElementById("form-tambah-produk").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const nama = document.getElementById("input-nama").value.trim();
+            const harga = document.getElementById("input-harga").value;
+            const stok = document.getElementById("input-stok").value;
+
+            if (nama && harga && stok) {
+                tambahProduk(nama, harga, stok);
+                this.reset();
+            }
+        });
+
+        // Tampilkan produk saat pertama kali dimuat
+        tampilkanProduk();
+    </script>
+</body>
+</html>
