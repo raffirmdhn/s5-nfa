@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tugas 4 - OOP Javascript</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 25px;
+            color: #2c3e50;
+        }
+
+        h2 {
+            font-size: 16px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .form-section {
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+        }
+
+        .form-section h2 {
+            margin-top: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+            background-color: #ffffff;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #3182ce;
+        }
+
+        .btn-submit {
+            background-color: #2c3e50;
+            color: #ffffff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-submit:hover {
+            background-color: #1a252f;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            text-align: center;
+        }
+
+        thead th {
+            background-color: #2c3e50;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background-color: #e6fffa;
+            color: #234e52;
+            border: 1px solid #b2f5ea;
+        }
+
+        .badge-warning {
+            background-color: #fffaf0;
+            color: #744210;
+            border: 1px solid #feebc8;
+        }
+
+        .btn-return {
+            background-color: #3182ce;
+            color: #ffffff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-return:hover {
+            background-color: #2b6cb0;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #718096;
+            font-style: italic;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sistem Manajemen Transportasi & Rental Kendaraan</h1>
+
+        <div class="form-section">
+            <h2>Catat Transaksi Penyewaan</h2>
+            <form id="form-sewa">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="input-nama">Nama Pelanggan</label>
+                        <input type="text" id="input-nama" placeholder="Contoh: Budi Santoso" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-telepon">Nomor Telepon</label>
+                        <input type="tel" id="input-telepon" placeholder="Contoh: 08123456789" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="select-kendaraan">Pilih Kendaraan</label>
+                        <select id="select-kendaraan" required>
+                            <option value="">-- Pilih Kendaraan Tersedia --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-durasi">Durasi Sewa (Hari)</label>
+                        <input type="number" id="input-durasi" min="1" value="1" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit">Catat Penyewaan</button>
+            </form>
+        </div>
+
+        <h2>Daftar Pelanggan yang Sedang Menyewa</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Pelanggan</th>
+                        <th>No. Telepon</th>
+                        <th>Kendaraan Disewa</th>
+                        <th>Jenis</th>
+                        <th>Durasi</th>
+                        <th>Total Biaya</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="tabel-pelanggan-body">
+                </tbody>
+            </table>
+        </div>
+
+        <h2>Daftar Armada Kendaraan</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nama Kendaraan</th>
+                        <th>Jenis</th>
+                        <th>Plat Nomor</th>
+                        <th>Karakteristik / Spesifikasi</th>
+                        <th>Tarif / Hari</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="tabel-kendaraan-body">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Class Induk: Kendaraan
+        class Kendaraan {
+            id;
+            nama;
+            jenis;
+            platNomor;
+            tarifPerHari;
+            status;
+
+            constructor(id, nama, jenis, platNomor, tarifPerHari) {
+                this.id = id;
+                this.nama = nama;
+                this.jenis = jenis;
+                this.platNomor = platNomor;
+                this.tarifPerHari = tarifPerHari;
+                this.status = "Tersedia";
+            }
+
+            getDeskripsi() {
+                return `${this.nama} (${this.platNomor})`;
+            }
+
+            getSpesifikasi() {
+                return "Kendaraan Operasional Standar";
+            }
+
+            setDisewa() {
+                this.status = "Disewa";
+            }
+
+            setKembali() {
+                this.status = "Tersedia";
+            }
+        }
+
+        // Subclass: Mobil
+        class Mobil extends Kendaraan {
+            kapasitasPenumpang;
+            tipeBahanBakar;
+
+            constructor(id, nama, platNomor, tarifPerHari, kapasitasPenumpang, tipeBahanBakar) {
+                super(id, nama, "Mobil", platNomor, tarifPerHari);
+                this.kapasitasPenumpang = kapasitasPenumpang;
+                this.tipeBahanBakar = tipeBahanBakar;
+            }
+
+            getSpesifikasi() {
+                return `Kapasitas: ${this.kapasitasPenumpang} orang, BBM: ${this.tipeBahanBakar}`;
+            }
+        }
+
+        // Subclass: Motor
+        class Motor extends Kendaraan {
+            tipeTransmisi;
+            kapasitasMesin;
+
+            constructor(id, nama, platNomor, tarifPerHari, tipeTransmisi, kapasitasMesin) {
+                super(id, nama, "Motor", platNomor, tarifPerHari);
+                this.tipeTransmisi = tipeTransmisi;
+                this.kapasitasMesin = kapasitasMesin;
+            }
+
+            getSpesifikasi() {
+                return `Transmisi: ${this.tipeTransmisi}, Mesin: ${this.kapasitasMesin} cc`;
+            }
+        }
+
+        // Subclass: Bus
+        class Bus extends Kendaraan {
+            jumlahKursi;
+            fasilitas;
+
+            constructor(id, nama, platNomor, tarifPerHari, jumlahKursi, fasilitas) {
+                super(id, nama, "Bus", platNomor, tarifPerHari);
+                this.jumlahKursi = jumlahKursi;
+                this.fasilitas = fasilitas;
+            }
+
+            getSpesifikasi() {
+                return `Kapasitas: ${this.jumlahKursi} kursi, Fasilitas: ${this.fasilitas}`;
+            }
+        }
+
+        // Class: Pelanggan
+        class Pelanggan {
+            nama;
+            nomorTelepon;
+            kendaraanDisewa;
+            durasiSewa;
+            totalBiaya;
+
+            constructor(nama, nomorTelepon, kendaraanDisewa = null) {
+                this.nama = nama;
+                this.nomorTelepon = nomorTelepon;
+                this.kendaraanDisewa = kendaraanDisewa;
+                this.durasiSewa = 0;
+                this.totalBiaya = 0;
+            }
+
+            // Metode untuk mencatat transaksi penyewaan kendaraan
+            catatTransaksiSewa(kendaraan, durasiHari) {
+                this.kendaraanDisewa = kendaraan;
+                this.durasiSewa = Number(durasiHari);
+                this.totalBiaya = kendaraan.tarifPerHari * this.durasiSewa;
+                kendaraan.setDisewa();
+            }
+
+            // Metode untuk mengembalikan kendaraan
+            kembalikanKendaraan() {
+                if (this.kendaraanDisewa) {
+                    this.kendaraanDisewa.setKembali();
+                    this.kendaraanDisewa = null;
+                }
+            }
+        }
+
+        // Class: Sistem Manajemen Transportasi
+        class SistemManajemenTransportasi {
+            daftarKendaraan;
+            daftarPelanggan;
+
+            constructor() {
+                this.daftarKendaraan = [];
+                this.daftarPelanggan = [];
+            }
+
+            tambahKendaraan(kendaraan) {
+                this.daftarKendaraan.push(kendaraan);
+            }
+
+            cariKendaraanById(id) {
+                return this.daftarKendaraan.find(k => k.id === id);
+            }
+
+            sewaKendaraan(nama, nomorTelepon, idKendaraan, durasi) {
+                const kendaraan = this.cariKendaraanById(idKendaraan);
+                if (!kendaraan) {
+                    alert("Kendaraan tidak ditemukan.");
+                    return false;
+                }
+
+                if (kendaraan.status !== "Tersedia") {
+                    alert("Kendaraan sedang tidak tersedia.");
+                    return false;
+                }
+
+                const pelanggan = new Pelanggan(nama, nomorTelepon);
+                pelanggan.catatTransaksiSewa(kendaraan, durasi);
+                this.daftarPelanggan.push(pelanggan);
+
+                console.log(`Transaksi berhasil dicatat: ${pelanggan.nama} menyewa ${kendaraan.nama} selama ${durasi} hari.`);
+                return true;
+            }
+
+            kembalikanSewa(indexPelanggan) {
+                const pelangganAktif = this.getPelangganSedangSewa();
+                const pelanggan = pelangganAktif[indexPelanggan];
+
+                if (pelanggan) {
+                    const namaKendaraan = pelanggan.kendaraanDisewa ? pelanggan.kendaraanDisewa.nama : "Kendaraan";
+                    pelanggan.kembalikanKendaraan();
+                    console.log(`${pelanggan.nama} telah mengembalikan ${namaKendaraan}.`);
+                }
+            }
+
+            // Mendapatkan daftar pelanggan yang sedang menyewa kendaraan
+            getPelangganSedangSewa() {
+                return this.daftarPelanggan.filter(p => p.kendaraanDisewa !== null);
+            }
+        }
+
+        // Inisialisasi Sistem dan Data Awal
+        const sistem = new SistemManajemenTransportasi();
+
+        sistem.tambahKendaraan(new Mobil(1, "Toyota Avanza", "B 1234 ABC", 400000, 7, "Bensin"));
+        sistem.tambahKendaraan(new Mobil(2, "Innova Reborn", "B 5678 DEF", 650000, 7, "Diesel"));
+        sistem.tambahKendaraan(new Motor(3, "Honda Vario 160", "B 3456 GHI", 100000, "Matic", 160));
+        sistem.tambahKendaraan(new Motor(4, "Yamaha NMAX", "B 7890 JKL", 120000, "Matic", 155));
+        sistem.tambahKendaraan(new Bus(5, "Isuzu Elf Long", "B 9012 MNO", 1200000, 19, "AC, Audio, Reclining Seat"));
+
+        // Data awal transaksi sewa pelanggan
+        sistem.sewaKendaraan("Ahmad Fauzi", "081298765432", 1, 3);
+        sistem.sewaKendaraan("Siti Aminah", "085712345678", 3, 2);
+
+        // Format mata uang Rupiah
+        function formatRupiah(angka) {
+            return "Rp " + Number(angka).toLocaleString("id-ID");
+        }
+
+        // Render Dropdown Pilihan Kendaraan
+        function renderDropdownKendaraan() {
+            const select = document.getElementById("select-kendaraan");
+            select.innerHTML = '<option value="">-- Pilih Kendaraan Tersedia --</option>';
+
+            const kendaraanTersedia = sistem.daftarKendaraan.filter(k => k.status === "Tersedia");
+
+            kendaraanTersedia.forEach(k => {
+                const option = document.createElement("option");
+                option.value = k.id;
+                option.textContent = `[${k.jenis}] ${k.nama} - ${k.platNomor} (${formatRupiah(k.tarifPerHari)}/hari)`;
+                select.appendChild(option);
+            });
+        }
+
+        // Render Tabel Pelanggan yang Sedang Menyewa
+        function renderTabelPelanggan() {
+            const tbody = document.getElementById("tabel-pelanggan-body");
+            tbody.innerHTML = "";
+
+            const pelangganAktif = sistem.getPelangganSedangSewa();
+
+            if (pelangganAktif.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="empty-message">Tidak ada pelanggan yang sedang menyewa kendaraan saat ini</td></tr>';
+                return;
+            }
+
+            pelangganAktif.forEach((pelanggan, index) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><strong>${pelanggan.nama}</strong></td>
+                    <td>${pelanggan.nomorTelepon}</td>
+                    <td>${pelanggan.kendaraanDisewa.nama} (${pelanggan.kendaraanDisewa.platNomor})</td>
+                    <td>${pelanggan.kendaraanDisewa.jenis}</td>
+                    <td>${pelanggan.durasiSewa} hari</td>
+                    <td>${formatRupiah(pelanggan.totalBiaya)}</td>
+                    <td><button class="btn-return" onclick="handleKembalikan(${index})">Selesai Sewa</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Render Tabel Daftar Seluruh Kendaraan
+        function renderTabelKendaraan() {
+            const tbody = document.getElementById("tabel-kendaraan-body");
+            tbody.innerHTML = "";
+
+            sistem.daftarKendaraan.forEach(k => {
+                const tr = document.createElement("tr");
+                const badgeClass = k.status === "Tersedia" ? "badge-success" : "badge-warning";
+
+                tr.innerHTML = `
+                    <td>${k.id}</td>
+                    <td>${k.nama}</td>
+                    <td>${k.jenis}</td>
+                    <td>${k.platNomor}</td>
+                    <td>${k.getSpesifikasi()}</td>
+                    <td>${formatRupiah(k.tarifPerHari)}</td>
+                    <td><span class="badge ${badgeClass}">${k.status}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Handle Pengembalian Kendaraan
+        function handleKembalikan(index) {
+            sistem.kembalikanSewa(index);
+            updateTampilan();
+        }
+
+        // Refresh Semua Tampilan
+        function updateTampilan() {
+            renderDropdownKendaraan();
+            renderTabelPelanggan();
+            renderTabelKendaraan();
+        }
+
+        // Form Submit Handler
+        document.getElementById("form-sewa").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const nama = document.getElementById("input-nama").value.trim();
+            const telepon = document.getElementById("input-telepon").value.trim();
+            const idKendaraan = Number(document.getElementById("select-kendaraan").value);
+            const durasi = Number(document.getElementById("input-durasi").value);
+
+            if (nama && telepon && idKendaraan && durasi > 0) {
+                const berhasil = sistem.sewaKendaraan(nama, telepon, idKendaraan, durasi);
+                if (berhasil) {
+                    this.reset();
+                    document.getElementById("input-durasi").value = 1;
+                    updateTampilan();
+                }
+            }
+        });
+
+        // Inisialisasi Tampilan Saat Halaman Dimuat
+        updateTampilan();
+    </script>
+</body>
+</html>
