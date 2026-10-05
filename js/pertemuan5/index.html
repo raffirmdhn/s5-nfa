@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tugas 5 - Manajemen Produk Toko Online</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .info-mahasiswa {
+            background-color: #edf2f7;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #4a5568;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .form-section {
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+        }
+
+        .form-section h2 {
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-group input {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+            background-color: #ffffff;
+        }
+
+        .form-group input:focus {
+            border-color: #3182ce;
+        }
+
+        .btn-submit {
+            background-color: #2c3e50;
+            color: #ffffff;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-submit:hover {
+            background-color: #1a252f;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        table, th, td {
+            border: 1px solid #e2e8f0;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #2c3e50;
+            color: #ffffff;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        td.text-center {
+            text-align: center;
+        }
+
+        td.text-right {
+            text-align: right;
+        }
+
+        tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .btn-hapus {
+            background-color: #e53e3e;
+            color: #ffffff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-hapus:hover {
+            background-color: #c53030;
+        }
+
+        .empty-row {
+            text-align: center;
+            color: #a0aec0;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .summary-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding: 10px 15px;
+            background-color: #edf2f7;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Manajemen Produk Toko Online</h1>
+
+        <div class="info-mahasiswa">
+            <strong>Nama:</strong> Raffi Ramadhan &nbsp;|&nbsp; 
+            <strong>NIM:</strong> 0110224204 &nbsp;|&nbsp; 
+            <strong>Mata Kuliah:</strong> Pemrograman Web (JS Pertemuan 5)
+        </div>
+
+        <section class="form-section">
+            <h2>Tambah Produk Baru</h2>
+            <form id="form-produk">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="input-id">ID Produk</label>
+                        <input type="number" id="input-id" placeholder="Contoh: 7" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-nama">Nama Produk</label>
+                        <input type="text" id="input-nama" placeholder="Contoh: Mouse Wireless" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-harga">Harga (Rp)</label>
+                        <input type="number" id="input-harga" placeholder="Contoh: 250000" required min="1000">
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit" id="btn-tambah">Tambah Produk</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Daftar Produk</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">ID</th>
+                            <th style="width: 45%;">Nama Produk</th>
+                            <th style="width: 30%;">Harga</th>
+                            <th style="width: 15%;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-produk-body">
+                    </tbody>
+                </table>
+            </div>
+            <div class="summary-box">
+                <span>Total Item Produk: <span id="total-produk">0</span></span>
+                <span>Total Nilai Inventaris: <span id="total-nilai">Rp 0</span></span>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Data Produk Awal (Minimal 5 Produk)
+        let produkList = [
+            { id: 1, nama: "Laptop", harga: 12000000 },
+            { id: 2, nama: "Smartphone", harga: 5000000 },
+            { id: 4, nama: "Smartwatch", harga: 1500000 },
+            { id: 5, nama: "Headphone Bluetooth", harga: 850000 },
+            { id: 6, nama: "Keyboard Mechanical", harga: 750000 }
+        ];
+
+        // Format angka ke format Rupiah
+        function formatRupiah(angka) {
+            return "Rp " + Number(angka).toLocaleString("id-ID");
+        }
+
+        // Menambahkan Produk dengan Spread Operator
+        function tambahProduk(id, nama, harga) {
+            const produkBaru = {
+                id: Number(id),
+                nama: String(nama).trim(),
+                harga: Number(harga)
+            };
+
+            // Menggunakan spread operator untuk menggabungkan data lama dengan data baru
+            produkList = [...produkList, produkBaru];
+            console.log(`[Tambah] Produk "${produkBaru.nama}" berhasil ditambahkan.`);
+        }
+
+        // Menghapus Produk dengan Rest Parameter
+        function hapusProduk(...ids) {
+            // Rest parameter (...ids) menampung seluruh argumen ID yang ingin dihapus
+            produkList = produkList.filter(produk => !ids.includes(produk.id));
+            console.log(`[Hapus] Produk dengan ID (${ids.join(", ")}) telah dihapus.`);
+        }
+
+        // Menampilkan Produk dengan Destructuring
+        function tampilkanProduk() {
+            const tbody = document.getElementById("tabel-produk-body");
+            const totalProdukElem = document.getElementById("total-produk");
+            const totalNilaiElem = document.getElementById("total-nilai");
+
+            if (tbody) {
+                tbody.innerHTML = "";
+            }
+
+            console.log("=== Daftar Produk Saat Ini ===");
+
+            if (produkList.length === 0) {
+                if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="empty-row">Belum ada produk yang tersedia</td></tr>';
+                }
+                if (totalProdukElem) totalProdukElem.textContent = "0";
+                if (totalNilaiElem) totalNilaiElem.textContent = formatRupiah(0);
+                console.log("Daftar produk kosong.");
+                return;
+            }
+
+            let totalNilai = 0;
+
+            // Menggunakan Destructuring pada iterasi produk
+            produkList.forEach(produk => {
+                const { id, nama, harga } = produk;
+                totalNilai += harga;
+
+                console.log(`ID: ${id} | Nama: ${nama} | Harga: ${formatRupiah(harga)}`);
+
+                if (tbody) {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td class="text-center">${id}</td>
+                        <td><strong>${nama}</strong></td>
+                        <td class="text-right">${formatRupiah(harga)}</td>
+                        <td class="text-center">
+                            <button class="btn-hapus" onclick="eventHandler.handleHapus(${id})">Hapus</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+
+            if (totalProdukElem) totalProdukElem.textContent = produkList.length;
+            if (totalNilaiElem) totalNilaiElem.textContent = formatRupiah(totalNilai);
+        }
+
+        // Objek Event Handler untuk mengelola event antarmuka
+        const eventHandler = {
+            handleTambah(event) {
+                event.preventDefault();
+
+                const idInput = document.getElementById("input-id");
+                const namaInput = document.getElementById("input-nama");
+                const hargaInput = document.getElementById("input-harga");
+
+                const id = Number(idInput.value);
+                const nama = namaInput.value.trim();
+                const harga = Number(hargaInput.value);
+
+                if (!id || !nama || isNaN(harga) || harga <= 0) {
+                    alert("Mohon masukkan data produk yang valid!");
+                    return;
+                }
+
+                // Cek apakah ID sudah digunakan
+                const idSudahAda = produkList.some(p => p.id === id);
+                if (idSudahAda) {
+                    alert(`Produk dengan ID ${id} sudah ada. Silakan gunakan ID lain.`);
+                    return;
+                }
+
+                // Panggil fungsi tambahProduk dengan spread operator
+                tambahProduk(id, nama, harga);
+
+                // Perbarui tampilan tabel dan log
+                tampilkanProduk();
+
+                // Reset form input
+                document.getElementById("form-produk").reset();
+            },
+
+            handleHapus(id) {
+                if (confirm(`Apakah Anda yakin ingin menghapus produk dengan ID ${id}?`)) {
+                    hapusProduk(id);
+                    tampilkanProduk();
+                }
+            }
+        };
+
+        // Pemasangan Event Listener pada form penambahan produk
+        const formProduk = document.getElementById("form-produk");
+        if (formProduk) {
+            formProduk.addEventListener("submit", eventHandler.handleTambah);
+        }
+
+        // Eksekusi Contoh Alur Pengujian (Sesuai Soal Tugas)
+        tampilkanProduk();
+        // Contoh penambahan data dengan spread operator
+        tambahProduk(3, "Tablet", 7000000);
+        tampilkanProduk();
+        // Contoh penghapusan data dengan rest parameter
+        hapusProduk(2);
+        tampilkanProduk();
+    </script>
+</body>
+</html>
