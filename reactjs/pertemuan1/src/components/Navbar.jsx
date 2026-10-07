@@ -2,7 +2,14 @@ function Navbar({ activePage, setActivePage }) {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
-        <a className="navbar-brand" href="#" onClick={(e) => { e.preventDefault(); setActivePage('home'); }}>
+        <a
+          className="navbar-brand"
+          href="#"
+          onClick={(e) => {
+            e.preventDefault()
+            setActivePage('home')
+          }}
+        >
           Praktikum React
         </a>
         <button
@@ -18,7 +25,7 @@ function Navbar({ activePage, setActivePage }) {
             <li className="nav-item">
               <button
                 type="button"
-                className={`nav-link btn btn-link text-decoration-none ${activePage === 'home' ? 'active text-primary' : ''}`}
+                className={`nav-link btn btn-link text-decoration-none ${activePage === 'home' ? 'active' : ''}`}
                 onClick={() => setActivePage('home')}
               >
                 Home
@@ -27,7 +34,7 @@ function Navbar({ activePage, setActivePage }) {
             <li className="nav-item">
               <button
                 type="button"
-                className={`nav-link btn btn-link text-decoration-none ${activePage === 'team' ? 'active text-primary' : ''}`}
+                className={`nav-link btn btn-link text-decoration-none ${activePage === 'team' ? 'active' : ''}`}
                 onClick={() => setActivePage('team')}
               >
                 Team
@@ -36,7 +43,7 @@ function Navbar({ activePage, setActivePage }) {
             <li className="nav-item">
               <button
                 type="button"
-                className={`nav-link btn btn-link text-decoration-none ${activePage === 'contact' ? 'active text-primary' : ''}`}
+                className={`nav-link btn btn-link text-decoration-none ${activePage === 'contact' ? 'active' : ''}`}
                 onClick={() => setActivePage('contact')}
               >
                 Contact

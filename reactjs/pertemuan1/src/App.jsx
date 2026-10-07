@@ -12,7 +12,7 @@ function App() {
     <div className="d-flex flex-column min-vh-100">
       <Navbar activePage={activePage} setActivePage={setActivePage} />
       <main className="flex-grow-1">
-        {activePage === 'home' && <Home />}
+        {activePage === 'home' && <Home setActivePage={setActivePage} />}
         {activePage === 'team' && <Team />}
         {activePage === 'contact' && <Contact />}
       </main>
