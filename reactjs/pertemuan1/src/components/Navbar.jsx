@@ -1,53 +1,56 @@
-function Navbar({ activePage, setActivePage }) {
+import { Link, NavLink } from 'react-router-dom'
+
+function Navbar() {
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm custom-navbar">
       <div className="container">
-        <a
-          className="navbar-brand"
-          href="#"
-          onClick={(e) => {
-            e.preventDefault()
-            setActivePage('home')
-          }}
-        >
-          Praktikum React
-        </a>
+        <Link className="navbar-brand d-flex align-items-center gap-2 fw-bold" to="/">
+          <i className="bi bi-code-square text-primary fs-4"></i>
+          <span>Praktikum React</span>
+        </Link>
         <button
           className="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
         >
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto">
+          <ul className="navbar-nav ms-auto gap-lg-2">
             <li className="nav-item">
-              <button
-                type="button"
-                className={`nav-link btn btn-link text-decoration-none ${activePage === 'home' ? 'active' : ''}`}
-                onClick={() => setActivePage('home')}
+              <NavLink
+                to="/"
+                end
+                className={({ isActive }) =>
+                  `nav-link px-3 py-2 rounded ${isActive ? 'active-link fw-semibold text-white' : 'text-secondary'}`
+                }
               >
                 Home
-              </button>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <button
-                type="button"
-                className={`nav-link btn btn-link text-decoration-none ${activePage === 'team' ? 'active' : ''}`}
-                onClick={() => setActivePage('team')}
+              <NavLink
+                to="/team"
+                className={({ isActive }) =>
+                  `nav-link px-3 py-2 rounded ${isActive ? 'active-link fw-semibold text-white' : 'text-secondary'}`
+                }
               >
                 Team
-              </button>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <button
-                type="button"
-                className={`nav-link btn btn-link text-decoration-none ${activePage === 'contact' ? 'active' : ''}`}
-                onClick={() => setActivePage('contact')}
+              <NavLink
+                to="/contact"
+                className={({ isActive }) =>
+                  `nav-link px-3 py-2 rounded ${isActive ? 'active-link fw-semibold text-white' : 'text-secondary'}`
+                }
               >
                 Contact
-              </button>
+              </NavLink>
             </li>
           </ul>
         </div>
@@ -57,3 +60,4 @@ function Navbar({ activePage, setActivePage }) {
 }
 
 export default Navbar
+

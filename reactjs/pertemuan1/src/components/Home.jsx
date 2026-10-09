@@ -1,4 +1,6 @@
-function Home({ setActivePage }) {
+import { Link } from 'react-router-dom'
+
+function Home() {
   const techStack = [
     { name: 'HTML5', icon: 'bi-filetype-html', desc: 'Struktur Web' },
     { name: 'CSS3', icon: 'bi-filetype-css', desc: 'Styling Dasar' },
@@ -19,12 +21,12 @@ function Home({ setActivePage }) {
             Website ini dibuat untuk memenuhi tugas praktikum React JS Pertemuan 1 dengan memanfaatkan konsep modular component dan Bootstrap styling.
           </p>
           <div className="d-flex gap-2">
-            <button className="btn btn-primary" onClick={() => setActivePage('team')}>
-              Lihat Team
-            </button>
-            <button className="btn btn-outline-secondary" onClick={() => setActivePage('contact')}>
-              Hubungi Saya
-            </button>
+            <Link to="/team" className="btn btn-primary">
+              <i className="bi bi-people me-1"></i> Lihat Team
+            </Link>
+            <Link to="/contact" className="btn btn-outline-secondary">
+              <i className="bi bi-envelope me-1"></i> Hubungi Saya
+            </Link>
           </div>
         </div>
         <div className="col-md-6 text-center">
