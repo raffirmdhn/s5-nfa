@@ -1,0 +1,58 @@
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.custom-navbar {
+  background-color: #1e293b !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.custom-navbar .nav-link {
+  color: #cbd5e1 !important;
+  font-size: 0.95rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.custom-navbar .nav-link:hover {
+  color: #ffffff !important;
+}
+
+.custom-navbar .nav-link.active-link {
+  color: #ffffff !important;
+  background-color: #0d6efd;
+}
+
+.book-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.book-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+}
+
+.book-card-img {
+  height: 200px;
+  object-fit: cover;
+  width: 100%;
+  background-color: #e2e8f0;
+}
+
+.book-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 0.9rem;
+  color: #64748b;
+}
