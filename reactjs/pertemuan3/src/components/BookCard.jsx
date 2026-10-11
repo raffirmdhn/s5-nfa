@@ -15,19 +15,19 @@ function BookCard({ book }) {
       <div className="card-body d-flex flex-column">
         <div className="d-flex justify-content-between align-items-start mb-2">
           <span className="badge bg-primary-subtle text-primary border border-primary-subtle">
-            {book.year}
+            {book?.year || '-'}
           </span>
-          <small className="text-muted">ID: #{book.id}</small>
+          <small className="text-muted">ID: #{book?.id || '-'}</small>
         </div>
-        <h5 className="card-title fw-bold mb-1 text-truncate" title={book.title}>
-          {book.title}
+        <h5 className="card-title fw-bold mb-1 text-truncate" title={book?.title || 'Tanpa Judul'}>
+          {book?.title || 'Tanpa Judul'}
         </h5>
         <p className="card-subtitle text-muted mb-3 small">
           <i className="bi bi-person me-1"></i>
-          {book.author}
+          {book?.author || 'Penulis Anonim'}
         </p>
         <p className="card-text book-description flex-grow-1">
-          {book.description}
+          {book?.description || 'Tidak ada deskripsi.'}
         </p>
       </div>
       <div className="card-footer bg-transparent border-top-0 pt-0 pb-3">

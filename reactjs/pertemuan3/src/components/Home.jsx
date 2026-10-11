@@ -9,8 +9,8 @@ function Home({ books = [] }) {
         <div className="container">
           <div className="row align-items-center g-4">
             <div className="col-lg-6">
-              <span className="badge bg-primary-subtle text-primary mb-3 px-3 py-2 fs-6">
-                <i className="bi bi-star-fill me-1 text-warning"></i> Pertemuan 3 &bull; React Hooks & List Rendering
+              <span className="badge bg-dark-subtle text-dark mb-3 px-3 py-2 fs-6">
+                Pertemuan 3 &bull; React Hooks & List Rendering
               </span>
               <h1 className="display-5 fw-bold text-dark lh-sm mb-3">
                 Katalog Buku Pemrograman & Teknologi Modern

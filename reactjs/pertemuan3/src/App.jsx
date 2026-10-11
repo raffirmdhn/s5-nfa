@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
-import initialBooks from './Utils/books'
+import initialBooks from './utils/books'
 import Navbar from './components/Navbar'
 import Home from './components/Home'
 import Book from './components/Book'

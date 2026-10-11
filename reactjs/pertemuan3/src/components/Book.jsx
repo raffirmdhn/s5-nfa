@@ -63,11 +63,10 @@ function Book({ books = [], onAddBook }) {
 
   const filteredBooks = books.filter((book) => {
     const query = searchQuery.toLowerCase()
-    return (
-      book.title.toLowerCase().includes(query) ||
-      book.author.toLowerCase().includes(query) ||
-      String(book.year).includes(query)
-    )
+    const title = (book?.title || '').toLowerCase()
+    const author = (book?.author || '').toLowerCase()
+    const year = String(book?.year || '')
+    return title.includes(query) || author.includes(query) || year.includes(query)
   })
 
   return (

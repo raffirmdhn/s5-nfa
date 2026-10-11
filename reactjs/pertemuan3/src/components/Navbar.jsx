@@ -5,7 +5,6 @@ function Navbar({ totalBooks = 0 }) {
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm custom-navbar">
       <div className="container">
         <Link className="navbar-brand d-flex align-items-center gap-2 fw-bold" to="/">
-          <i className="bi bi-book-half text-primary fs-4"></i>
           <span>BookSales</span>
         </Link>
         <button
