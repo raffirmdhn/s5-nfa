@@ -30,16 +30,13 @@ function Book({ books = [], onAddBook }) {
       return
     }
 
-    const defaultCover =
-      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&auto=format&fit=crop&q=60'
-
     const newBook = {
       id: Date.now(),
       title: formData.title.trim(),
       author: formData.author.trim(),
       year: Number(formData.year) || new Date().getFullYear(),
       description: formData.description.trim() || 'Buku referensi pemrograman.',
-      image: formData.image.trim() || defaultCover
+      image: formData.image.trim()
     }
 
     if (onAddBook) {
@@ -54,7 +51,7 @@ function Book({ books = [], onAddBook }) {
       image: ''
     })
     setShowForm(false)
-    setAlertMessage(`Buku "${newBook.title}" berhasil ditambahkan!`)
+    setAlertMessage(`Buku "${newBook.title}" berhasil ditambahkan ke koleksi.`)
 
     setTimeout(() => {
       setAlertMessage('')
@@ -71,52 +68,48 @@ function Book({ books = [], onAddBook }) {
 
   return (
     <div className="container my-5">
-      {/* Header Section */}
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 pb-3 mb-4 border-bottom">
         <div>
-          <h1 className="fw-bold h2 mb-1">Halaman Book</h1>
-          <p className="text-muted mb-0">
-            Daftar koleksi buku yang dirender secara dinamis menggunakan hooks & metode <code>map()</code>
+          <h1 className="h3 fw-bold mb-1">Manajemen Koleksi Buku</h1>
+          <p className="text-secondary small mb-0">
+            Daftar buku dengan rendering list dinamis dan pengelolaan state menggunakan React Hooks.
           </p>
         </div>
-        <div className="d-flex gap-2">
+        <div>
           <button
             type="button"
-            className={`btn ${showForm ? 'btn-secondary' : 'btn-primary'} d-flex align-items-center gap-2`}
+            className={`btn ${showForm ? 'btn-secondary' : 'btn-primary'} btn-sm px-3`}
             onClick={() => setShowForm(!showForm)}
           >
-            <i className={`bi ${showForm ? 'bi-x-lg' : 'bi-plus-circle'}`}></i>
-            <span>{showForm ? 'Tutup Form' : 'Tambah Buku'}</span>
+            <i className={`bi ${showForm ? 'bi-x-lg' : 'bi-plus-lg'} me-1`}></i>
+            {showForm ? 'Tutup Form' : 'Tambah Buku'}
           </button>
         </div>
       </div>
 
-      {/* Alert Notification */}
       {alertMessage && (
         <div className="alert alert-success alert-dismissible fade show" role="alert">
-          <i className="bi bi-check-circle-fill me-2"></i>
+          <i className="bi bi-check-circle me-2"></i>
           {alertMessage}
           <button
             type="button"
             className="btn-close"
             onClick={() => setAlertMessage('')}
-            aria-label="Close"
+            aria-label="Tutup"
           ></button>
         </div>
       )}
 
-      {/* Form Tambah Buku */}
       {showForm && (
-        <div className="card shadow-sm border-primary mb-5">
-          <div className="card-header bg-primary text-white d-flex align-items-center gap-2">
-            <i className="bi bi-journal-plus"></i>
-            <span className="fw-semibold">Form Tambah Buku Baru</span>
+        <div className="card border mb-4">
+          <div className="card-header bg-light py-2">
+            <span className="fw-semibold small text-dark">Formulir Tambah Buku</span>
           </div>
           <div className="card-body p-4">
             <form onSubmit={handleSubmit}>
               <div className="row g-3">
                 <div className="col-md-6">
-                  <label htmlFor="title" className="form-label fw-medium">
+                  <label htmlFor="title" className="form-label small fw-medium">
                     Judul Buku <span className="text-danger">*</span>
                   </label>
                   <input
@@ -124,14 +117,14 @@ function Book({ books = [], onAddBook }) {
                     id="title"
                     name="title"
                     className="form-control"
-                    placeholder="Contoh: Belajar Next.js 14"
+                    placeholder="Contoh: Belajar React Modern"
                     value={formData.title}
                     onChange={handleChange}
                     required
                   />
                 </div>
                 <div className="col-md-4">
-                  <label htmlFor="author" className="form-label fw-medium">
+                  <label htmlFor="author" className="form-label small fw-medium">
                     Penulis <span className="text-danger">*</span>
                   </label>
                   <input
@@ -146,7 +139,7 @@ function Book({ books = [], onAddBook }) {
                   />
                 </div>
                 <div className="col-md-2">
-                  <label htmlFor="year" className="form-label fw-medium">
+                  <label htmlFor="year" className="form-label small fw-medium">
                     Tahun Terbit
                   </label>
                   <input
@@ -161,29 +154,29 @@ function Book({ books = [], onAddBook }) {
                   />
                 </div>
                 <div className="col-md-12">
-                  <label htmlFor="image" className="form-label fw-medium">
-                    URL Gambar Cover (Opsional)
+                  <label htmlFor="image" className="form-label small fw-medium">
+                    URL Cover Buku (Opsional)
                   </label>
                   <input
                     type="url"
                     id="image"
                     name="image"
                     className="form-control"
-                    placeholder="https://example.com/cover.jpg (kosongkan untuk cover default)"
+                    placeholder="https://... (kosongkan jika tidak ada)"
                     value={formData.image}
                     onChange={handleChange}
                   />
                 </div>
                 <div className="col-md-12">
-                  <label htmlFor="description" className="form-label fw-medium">
-                    Deskripsi Buku
+                  <label htmlFor="description" className="form-label small fw-medium">
+                    Deskripsi Ringkas
                   </label>
                   <textarea
                     id="description"
                     name="description"
                     className="form-control"
                     rows="3"
-                    placeholder="Ringkasan materi atau sinopsis buku..."
+                    placeholder="Sinopsis singkat mengenai isi buku..."
                     value={formData.description}
                     onChange={handleChange}
                   ></textarea>
@@ -191,13 +184,13 @@ function Book({ books = [], onAddBook }) {
                 <div className="col-12 text-end">
                   <button
                     type="button"
-                    className="btn btn-outline-secondary me-2"
+                    className="btn btn-outline-secondary btn-sm me-2"
                     onClick={() => setShowForm(false)}
                   >
                     Batal
                   </button>
-                  <button type="submit" className="btn btn-primary px-4">
-                    <i className="bi bi-save me-1"></i> Simpan Buku
+                  <button type="submit" className="btn btn-primary btn-sm px-3">
+                    Simpan Data Buku
                   </button>
                 </div>
               </div>
@@ -206,7 +199,6 @@ function Book({ books = [], onAddBook }) {
         </div>
       )}
 
-      {/* Filter / Search Bar */}
       <div className="row g-3 align-items-center mb-4">
         <div className="col-md-6">
           <div className="input-group">
@@ -216,7 +208,7 @@ function Book({ books = [], onAddBook }) {
             <input
               type="text"
               className="form-control border-start-0 ps-0"
-              placeholder="Cari judul, penulis, atau tahun..."
+              placeholder="Cari berdasarkan judul, penulis, atau tahun..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -232,11 +224,10 @@ function Book({ books = [], onAddBook }) {
           </div>
         </div>
         <div className="col-md-6 text-md-end text-muted small">
-          Menampilkan <strong>{filteredBooks.length}</strong> dari <strong>{books.length}</strong> buku
+          Menampilkan {filteredBooks.length} dari total {books.length} buku
         </div>
       </div>
 
-      {/* Grid Buku dengan Metode Array.map() */}
       {filteredBooks.length > 0 ? (
         <div className="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-3">
           {filteredBooks.map((book) => (
@@ -247,9 +238,9 @@ function Book({ books = [], onAddBook }) {
         </div>
       ) : (
         <div className="text-center py-5 bg-white rounded border">
-          <i className="bi bi-inbox fs-1 text-muted mb-2 d-block"></i>
-          <h5 className="fw-semibold">Tidak ada buku yang cocok</h5>
-          <p className="text-muted small">Coba ubah kata kunci pencarian Anda.</p>
+          <i className="bi bi-search fs-2 text-muted mb-2 d-block"></i>
+          <p className="fw-semibold mb-1 text-dark">Buku tidak ditemukan</p>
+          <small className="text-muted">Tidak ada buku yang cocok dengan kata kunci &ldquo;{searchQuery}&rdquo;</small>
         </div>
       )}
     </div>

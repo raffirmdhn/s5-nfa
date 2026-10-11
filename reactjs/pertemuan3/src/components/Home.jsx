@@ -3,85 +3,50 @@ import BookCard from './BookCard'
 
 function Home({ books = [] }) {
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="bg-white border-bottom py-5">
-        <div className="container">
-          <div className="row align-items-center g-4">
-            <div className="col-lg-6">
-              <span className="badge bg-dark-subtle text-dark mb-3 px-3 py-2 fs-6">
-                Pertemuan 3 &bull; React Hooks & List Rendering
-              </span>
-              <h1 className="display-5 fw-bold text-dark lh-sm mb-3">
-                Katalog Buku Pemrograman & Teknologi Modern
-              </h1>
-              <p className="lead text-muted mb-4 fs-6">
-                Selamat datang di <strong>BookSales</strong>. Platform referensi buku teknologi untuk mahasiswa STT Terpadu Nurul Fikri dalam menguasai pemrograman web, mobile, dan data science.
-              </p>
-              <div className="d-flex flex-wrap gap-2">
-                <Link to="/book" className="btn btn-primary btn-lg fs-6 px-4">
-                  <i className="bi bi-collection me-2"></i> Buka Halaman Book
-                </Link>
-                <a href="#koleksi-buku" className="btn btn-outline-secondary btn-lg fs-6 px-4">
-                  <i className="bi bi-arrow-down-circle me-2"></i> Lihat Daftar
-                </a>
-              </div>
+    <div className="container my-5">
+      <div className="p-4 p-md-5 mb-4 bg-white border rounded">
+        <div className="row align-items-center g-4">
+          <div className="col-lg-8">
+            <h1 className="fw-bold text-dark mb-2">
+              Katalog Buku Pemrograman
+            </h1>
+            <p className="text-secondary mb-4">
+              Aplikasi katalog buku praktikum React JS Pertemuan 3. Menampilkan daftar koleksi buku referensi pemrograman web, mobile, dan data science menggunakan rendering list dinamis.
+            </p>
+            <div className="d-flex flex-wrap gap-2">
+              <Link to="/book" className="btn btn-primary px-3">
+                <i className="bi bi-journal-bookmark me-2"></i>
+                Kelola Koleksi Buku
+              </Link>
+              <a href="#koleksi-buku" className="btn btn-outline-secondary px-3">
+                Lihat Daftar Buku
+              </a>
             </div>
-            <div className="col-lg-6 text-center">
-              <img
-                src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=700&auto=format&fit=crop&q=80"
-                alt="Book Collection"
-                className="img-fluid rounded-4 shadow"
-                style={{ maxHeight: '380px', width: '100%', objectFit: 'cover' }}
-              />
+          </div>
+          <div className="col-lg-4">
+            <div className="bg-light p-3 rounded border">
+              <h6 className="fw-semibold text-dark mb-2">Informasi Praktikum</h6>
+              <ul className="list-unstyled mb-0 small text-secondary">
+                <li className="mb-1"><strong>Mahasiswa:</strong> Raffi Ramadhan</li>
+                <li className="mb-1"><strong>NIM:</strong> 0110224204</li>
+                <li className="mb-1"><strong>Mata Kuliah:</strong> Pemrograman Web</li>
+                <li><strong>Total Koleksi:</strong> {books.length} buku</li>
+              </ul>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Info Highlights */}
-      <section className="py-4 bg-light border-bottom">
-        <div className="container">
-          <div className="row g-3 text-center">
-            <div className="col-6 col-md-3">
-              <div className="p-3 bg-white rounded-3 shadow-sm border">
-                <h3 className="fw-bold text-primary mb-0">{books.length}</h3>
-                <small className="text-muted">Total Judul Buku</small>
-              </div>
-            </div>
-            <div className="col-6 col-md-3">
-              <div className="p-3 bg-white rounded-3 shadow-sm border">
-                <h3 className="fw-bold text-success mb-0">100%</h3>
-                <small className="text-muted">Bahasa Indonesia</small>
-              </div>
-            </div>
-            <div className="col-6 col-md-3">
-              <div className="p-3 bg-white rounded-3 shadow-sm border">
-                <h3 className="fw-bold text-info mb-0">Hooks</h3>
-                <small className="text-muted">State Management</small>
-              </div>
-            </div>
-            <div className="col-6 col-md-3">
-              <div className="p-3 bg-white rounded-3 shadow-sm border">
-                <h3 className="fw-bold text-warning mb-0">Array.map()</h3>
-                <small className="text-muted">Dynamic Render</small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Books Display Section */}
-      <section id="koleksi-buku" className="container my-5">
-        <div className="d-flex justify-content-between align-items-end mb-4">
+      <section id="koleksi-buku" className="pt-2">
+        <div className="d-flex justify-content-between align-items-center mb-4">
           <div>
-            <h2 className="fw-bold mb-1">Daftar Buku di Halaman Home</h2>
-            <p className="text-muted mb-0">
-              Menampilkan {books.length} koleksi buku menggunakan metode <code>map()</code>
+            <h2 className="h4 fw-bold mb-1">Daftar Koleksi Buku</h2>
+            <p className="text-muted small mb-0">
+              Menampilkan {books.length} judul buku yang tersimpan di sistem
             </p>
           </div>
           <Link to="/book" className="btn btn-outline-primary btn-sm">
-            Kelola di Halaman Book <i className="bi bi-arrow-right ms-1"></i>
+            Tambah Buku Baru
           </Link>
         </div>
 
