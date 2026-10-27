@@ -5,7 +5,7 @@
 @section('content')
     <div class="page-header">
         <h1 class="page-title">Daftar Genre</h1>
-        <p class="page-subtitle">Data kategori genre buku yang bersumber dari Model Genre (Array).</p>
+        <p class="page-subtitle">Data kategori genre buku yang bersumber dari database (Eloquent Model Genre).</p>
     </div>
 
     <div class="table-card">
@@ -21,12 +21,12 @@
                 @forelse ($genres as $genre)
                     <tr>
                         <td>
-                            <span class="badge">#{{ $genre['id'] }}</span>
+                            <span class="badge">#{{ $genre->id }}</span>
                         </td>
                         <td>
-                            <strong>{{ $genre['name'] }}</strong>
+                            <strong>{{ $genre->name }}</strong>
                         </td>
-                        <td>{{ $genre['description'] }}</td>
+                        <td>{{ $genre->description }}</td>
                     </tr>
                 @empty
                     <tr>

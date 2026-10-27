@@ -5,7 +5,7 @@
 @section('content')
     <div class="page-header">
         <h1 class="page-title">Daftar Penulis (Author)</h1>
-        <p class="page-subtitle">Data profil penulis buku yang bersumber dari Model Author (Array).</p>
+        <p class="page-subtitle">Data profil penulis buku yang bersumber dari database (Eloquent Model Author).</p>
     </div>
 
     <div class="table-card">
@@ -22,15 +22,19 @@
                 @forelse ($authors as $author)
                     <tr>
                         <td>
-                            <span class="badge">#{{ $author['id'] }}</span>
+                            <span class="badge">#{{ $author->id }}</span>
                         </td>
                         <td>
-                            <img src="{{ $author['photo'] }}" alt="{{ $author['name'] }}" class="avatar">
+                            @if ($author->photo)
+                                <img src="{{ $author->photo }}" alt="{{ $author->name }}" class="avatar">
+                            @else
+                                <span class="badge">-</span>
+                            @endif
                         </td>
                         <td>
-                            <strong>{{ $author['name'] }}</strong>
+                            <strong>{{ $author->name }}</strong>
                         </td>
-                        <td>{{ $author['bio'] }}</td>
+                        <td>{{ $author->bio ?? '-' }}</td>
                     </tr>
                 @empty
                     <tr>

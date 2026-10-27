@@ -164,14 +164,17 @@
 <body>
     <header>
         <div class="header-container">
-            <a href="{{ route('genres.index') }}" class="brand-title">BookSales API</a>
+            <a href="{{ route('books.index') }}" class="brand-title">BookSales API</a>
             <nav>
                 <ul class="nav-links">
                     <li>
-                        <a href="{{ route('genres.index') }}" class="{{ request()->routeIs('genres.index') ? 'active' : '' }}">Genres</a>
+                        <a href="{{ route('books.index') }}" class="{{ request()->routeIs('books.index') ? 'active' : '' }}">Books</a>
                     </li>
                     <li>
                         <a href="{{ route('authors.index') }}" class="{{ request()->routeIs('authors.index') ? 'active' : '' }}">Authors</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('genres.index') }}" class="{{ request()->routeIs('genres.index') ? 'active' : '' }}">Genres</a>
                     </li>
                 </ul>
             </nav>
