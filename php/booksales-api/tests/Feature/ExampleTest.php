@@ -15,34 +15,78 @@ class ExampleTest extends TestCase
         $this->seed();
     }
 
-    public function test_root_redirects_to_books(): void
+    public function test_root_returns_api_overview_json(): void
     {
-        $response = $this->get('/');
-        $response->assertRedirect(route('books.index'));
+        $response = $this->getJson('/');
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'message' => 'BookSales API Service',
+            ]);
     }
 
-    public function test_books_page_displays_books_and_relations(): void
+    public function test_api_books_returns_json_with_author_and_genre(): void
     {
-        $response = $this->get('/books');
-        $response->assertStatus(200);
-        $response->assertSee('Harry Potter and the Sorcerer&#039;s Stone', false);
-        $response->assertSee('J.K. Rowling');
-        $response->assertSee('Fiction');
+        $response = $this->getJson('/api/books');
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'success',
+                'message',
+                'data' => [
+                    '*' => [
+                        'id',
+                        'title',
+                        'description',
+                        'price',
+                        'stock',
+                        'cover_photo',
+                        'genre_id',
+                        'author_id',
+                        'author' => ['id', 'name'],
+                        'genre' => ['id', 'name'],
+                    ],
+                ],
+            ])
+            ->assertJsonPath('success', true)
+            ->assertJsonCount(5, 'data');
     }
 
-    public function test_authors_page_displays_authors(): void
+    public function test_api_authors_returns_json(): void
     {
-        $response = $this->get('/authors');
-        $response->assertStatus(200);
-        $response->assertSee('J.K. Rowling');
-        $response->assertSee('Andrea Hirata');
+        $response = $this->getJson('/api/authors');
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'success',
+                'message',
+                'data' => [
+                    '*' => [
+                        'id',
+                        'name',
+                        'photo',
+                        'bio',
+                    ],
+                ],
+            ])
+            ->assertJsonPath('success', true)
+            ->assertJsonCount(5, 'data');
     }
 
-    public function test_genres_page_displays_genres(): void
+    public function test_api_genres_returns_json(): void
     {
-        $response = $this->get('/genres');
-        $response->assertStatus(200);
-        $response->assertSee('Fiction');
-        $response->assertSee('Science Fiction');
+        $response = $this->getJson('/api/genres');
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'success',
+                'message',
+                'data' => [
+                    '*' => [
+                        'id',
+                        'name',
+                        'description',
+                    ],
+                ],
+            ])
+            ->assertJsonPath('success', true)
+            ->assertJsonCount(5, 'data');
     }
 }

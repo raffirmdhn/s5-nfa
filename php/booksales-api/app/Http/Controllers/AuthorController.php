@@ -3,14 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Author;
-use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
 
 class AuthorController extends Controller
 {
-    public function index(): View
+    public function index(): JsonResponse
     {
         $authors = Author::all();
 
-        return view('authors.index', compact('authors'));
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar penulis berhasil diambil',
+            'data' => $authors,
+        ], 200);
     }
 }

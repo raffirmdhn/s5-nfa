@@ -3,14 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Genre;
-use Illuminate\View\View;
+use Illuminate\Http\JsonResponse;
 
 class GenreController extends Controller
 {
-    public function index(): View
+    public function index(): JsonResponse
     {
         $genres = Genre::all();
 
-        return view('genres.index', compact('genres'));
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar genre berhasil diambil',
+            'data' => $genres,
+        ], 200);
     }
 }
