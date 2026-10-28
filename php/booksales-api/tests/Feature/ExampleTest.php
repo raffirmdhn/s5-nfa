@@ -89,4 +89,72 @@ class ExampleTest extends TestCase
             ->assertJsonPath('success', true)
             ->assertJsonCount(5, 'data');
     }
+
+    public function test_api_genres_can_create_genre(): void
+    {
+        $payload = [
+            'name' => 'Horror',
+            'description' => 'Genre yang menghadirkan rasa takut dan ketegangan.',
+        ];
+
+        $response = $this->postJson('/api/genres', $payload);
+        $response->assertStatus(201)
+            ->assertJson([
+                'success' => true,
+                'message' => 'Genre berhasil ditambahkan',
+                'data' => [
+                    'name' => 'Horror',
+                    'description' => 'Genre yang menghadirkan rasa takut dan ketegangan.',
+                ],
+            ]);
+
+        $this->assertDatabaseHas('genres', [
+            'name' => 'Horror',
+        ]);
+    }
+
+    public function test_api_genres_validation_fails_when_name_is_missing(): void
+    {
+        $response = $this->postJson('/api/genres', [
+            'description' => 'Deskripsi tanpa nama genre',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['name']);
+    }
+
+    public function test_api_authors_can_create_author(): void
+    {
+        $payload = [
+            'name' => 'Pramoedya Ananta Toer',
+            'photo' => 'https://ui-avatars.com/api/?name=Pramoedya+Ananta+Toer',
+            'bio' => 'Salah satu sastrawan terkemuka Indonesia, penulis Tetralogi Buru.',
+        ];
+
+        $response = $this->postJson('/api/authors', $payload);
+        $response->assertStatus(201)
+            ->assertJson([
+                'success' => true,
+                'message' => 'Penulis berhasil ditambahkan',
+                'data' => [
+                    'name' => 'Pramoedya Ananta Toer',
+                    'photo' => 'https://ui-avatars.com/api/?name=Pramoedya+Ananta+Toer',
+                    'bio' => 'Salah satu sastrawan terkemuka Indonesia, penulis Tetralogi Buru.',
+                ],
+            ]);
+
+        $this->assertDatabaseHas('authors', [
+            'name' => 'Pramoedya Ananta Toer',
+        ]);
+    }
+
+    public function test_api_authors_validation_fails_when_name_is_missing(): void
+    {
+        $response = $this->postJson('/api/authors', [
+            'bio' => 'Penulis tanpa nama',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['name']);
+    }
 }
