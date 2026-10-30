@@ -34,4 +34,66 @@ class GenreController extends Controller
             'data' => $genre,
         ], 201);
     }
+
+    public function show(string $id): JsonResponse
+    {
+        $genre = Genre::find($id);
+
+        if (!$genre) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Detail genre berhasil diambil',
+            'data' => $genre,
+        ], 200);
+    }
+
+    public function update(Request $request, string $id): JsonResponse
+    {
+        $genre = Genre::find($id);
+
+        if (!$genre) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan',
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $genre->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Genre berhasil diperbarui',
+            'data' => $genre,
+        ], 200);
+    }
+
+    public function destroy(string $id): JsonResponse
+    {
+        $genre = Genre::find($id);
+
+        if (!$genre) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan',
+            ], 404);
+        }
+
+        $genre->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Genre berhasil dihapus',
+        ], 200);
+    }
 }
