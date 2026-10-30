@@ -1,87 +1,247 @@
 {
 	"info": {
 		"_postman_id": "a918e907-7bc9-4bcf-a511-9e7f8721ad3e",
-		"name": "BookSales API",
-		"description": "Koleksi request Postman untuk pengujian API Genre dan Author pada BookSales API.",
+		"name": "BookSales API - Tugas 6 (JWT & RBAC)",
+		"description": "Koleksi request Postman untuk pengujian API Genre, Author, Books, serta Authentication JWT dan Role-Based Access Control (Admin vs Public/User).",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Genres",
+			"name": "Auth",
 			"item": [
 				{
-					"name": "Get All Genres",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/genres",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"genres"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Genre by ID",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/genres/1",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"genres",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Genre",
+					"name": "Register User",
 					"request": {
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							},
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Horror\",\n    \"description\": \"Genre yang menyajikan cerita misteri, supranatural, dan ketegangan mencekam.\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
+							"raw": "{\n    \"name\": \"Raffi Ramadhan\",\n    \"email\": \"raffi@gmail.com\",\n    \"password\": \"password123\",\n    \"role\": \"user\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login as Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.token) {",
+									"    pm.collectionVariables.set('admin_token', jsonData.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
 							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@gmail.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login as Regular User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.token) {",
+									"    pm.collectionVariables.set('user_token', jsonData.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@gmail.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Genres",
+			"item": [
+				{
+					"name": "Get All Genres (Public)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/genres",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"genres"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Genre by ID (Public)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/genres/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"genres",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Genre (Admin - Success)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Horror\",\n    \"description\": \"Genre cerita mistis dan supranatural mencekam.\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/genres",
@@ -97,29 +257,73 @@
 					"response": []
 				},
 				{
-					"name": "Update Genre",
+					"name": "Create Genre (User - Forbidden 403)",
 					"request": {
-						"method": "PUT",
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							},
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Fiction Updated\",\n    \"description\": \"Deskripsi genre fiction yang telah diperbarui.\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"raw": "{\n    \"name\": \"Horror Coba User\",\n    \"description\": \"Seharusnya ditolak 403 Forbidden\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/genres",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"genres"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Genre (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
 								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
 							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Fiction Updated By Admin\",\n    \"description\": \"Deskripsi diperbarui oleh Admin\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/genres/1",
@@ -136,14 +340,23 @@
 					"response": []
 				},
 				{
-					"name": "Delete Genre",
+					"name": "Delete Genre (Admin)",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							}
 						],
 						"url": {
@@ -166,14 +379,13 @@
 			"name": "Authors",
 			"item": [
 				{
-					"name": "Get All Authors",
+					"name": "Get All Authors (Public)",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							}
 						],
 						"url": {
@@ -190,14 +402,13 @@
 					"response": []
 				},
 				{
-					"name": "Get Author by ID",
+					"name": "Get Author by ID (Public)",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							}
 						],
 						"url": {
@@ -215,29 +426,32 @@
 					"response": []
 				},
 				{
-					"name": "Create Author",
+					"name": "Create Author (Admin - Success)",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							},
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Pramoedya Ananta Toer\",\n    \"photo\": \"https://ui-avatars.com/api/?name=Pramoedya+Ananta+Toer&background=1e293b&color=fff\",\n    \"bio\": \"Salah satu sastrawan besar Indonesia, penulis mahakarya Tetralogi Buru.\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n    \"name\": \"Pramoedya Ananta Toer\",\n    \"photo\": \"https://ui-avatars.com/api/?name=Pramoedya+Ananta+Toer&background=1e293b&color=fff\",\n    \"bio\": \"Salah satu sastrawan besar Indonesia, penulis Tetralogi Buru.\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/authors",
@@ -253,29 +467,73 @@
 					"response": []
 				},
 				{
-					"name": "Update Author",
+					"name": "Create Author (User - Forbidden 403)",
 					"request": {
-						"method": "PUT",
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							},
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"J.K. Rowling Updated\",\n    \"bio\": \"Penulis novel fantasi terkenal asal Inggris yang telah diperbarui biografi singkatnya.\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"raw": "{\n    \"name\": \"Penulis Coba User\",\n    \"bio\": \"Seharusnya ditolak 403\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/authors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"authors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Author (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
 								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
 							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"J.K. Rowling Updated By Admin\",\n    \"bio\": \"Biografi diperbarui oleh admin\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/authors/1",
@@ -292,14 +550,23 @@
 					"response": []
 				},
 				{
-					"name": "Delete Author",
+					"name": "Delete Author (Admin)",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							}
 						],
 						"url": {
@@ -322,14 +589,13 @@
 			"name": "Books",
 			"item": [
 				{
-					"name": "Get All Books",
+					"name": "Get All Books (Public)",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
+								"value": "application/json"
 							}
 						],
 						"url": {
@@ -344,6 +610,30 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get Book by ID (Public)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/books/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"books",
+								"1"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
@@ -352,6 +642,16 @@
 		{
 			"key": "base_url",
 			"value": "http://127.0.0.1:8000",
+			"type": "string"
+		},
+		{
+			"key": "admin_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_token",
+			"value": "",
 			"type": "string"
 		}
 	]

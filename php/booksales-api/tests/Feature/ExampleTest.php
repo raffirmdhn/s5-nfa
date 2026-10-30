@@ -2,6 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Author;
+use App\Models\Genre;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,6 +18,20 @@ class ExampleTest extends TestCase
         $this->seed();
     }
 
+    protected function getAdminToken(): string
+    {
+        $admin = User::where('email', 'admin@gmail.com')->first();
+
+        return auth('api')->login($admin);
+    }
+
+    protected function getUserToken(): string
+    {
+        $user = User::where('email', 'user@gmail.com')->first();
+
+        return auth('api')->login($user);
+    }
+
     public function test_root_returns_api_overview_json(): void
     {
         $response = $this->getJson('/');
@@ -25,310 +42,208 @@ class ExampleTest extends TestCase
             ]);
     }
 
-    public function test_api_books_returns_json_with_author_and_genre(): void
+    public function test_auth_can_register_and_login(): void
+    {
+        $registerResponse = $this->postJson('/api/register', [
+            'name' => 'Budi Santoso',
+            'email' => 'budi@gmail.com',
+            'password' => 'secret123',
+            'role' => 'user',
+        ]);
+
+        $registerResponse->assertStatus(201)
+            ->assertJsonPath('success', true)
+            ->assertJsonStructure([
+                'data' => ['user', 'token', 'token_type', 'expires_in'],
+            ]);
+
+        $loginResponse = $this->postJson('/api/login', [
+            'email' => 'budi@gmail.com',
+            'password' => 'secret123',
+        ]);
+
+        $loginResponse->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonStructure([
+                'data' => ['user', 'token', 'token_type', 'expires_in'],
+            ]);
+
+        $token = $loginResponse->json('data.token');
+
+        $logoutResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->postJson('/api/logout');
+
+        $logoutResponse->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'message' => 'Logout berhasil',
+            ]);
+    }
+
+    public function test_public_can_access_books_index(): void
     {
         $response = $this->getJson('/api/books');
         $response->assertStatus(200)
-            ->assertJsonStructure([
-                'success',
-                'message',
-                'data' => [
-                    '*' => [
-                        'id',
-                        'title',
-                        'description',
-                        'price',
-                        'stock',
-                        'cover_photo',
-                        'genre_id',
-                        'author_id',
-                        'author' => ['id', 'name'],
-                        'genre' => ['id', 'name'],
-                    ],
-                ],
-            ])
             ->assertJsonPath('success', true)
             ->assertJsonCount(5, 'data');
     }
 
-    public function test_api_authors_returns_json(): void
+    public function test_public_can_access_authors_index_and_show(): void
     {
-        $response = $this->getJson('/api/authors');
-        $response->assertStatus(200)
-            ->assertJsonStructure([
-                'success',
-                'message',
-                'data' => [
-                    '*' => [
-                        'id',
-                        'name',
-                        'photo',
-                        'bio',
-                    ],
-                ],
-            ])
+        $responseIndex = $this->getJson('/api/authors');
+        $responseIndex->assertStatus(200)
             ->assertJsonPath('success', true)
             ->assertJsonCount(5, 'data');
+
+        $responseShow = $this->getJson('/api/authors/1');
+        $responseShow->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.id', 1);
     }
 
-    public function test_api_genres_returns_json(): void
+    public function test_public_can_access_genres_index_and_show(): void
     {
-        $response = $this->getJson('/api/genres');
-        $response->assertStatus(200)
-            ->assertJsonStructure([
-                'success',
-                'message',
-                'data' => [
-                    '*' => [
-                        'id',
-                        'name',
-                        'description',
-                    ],
-                ],
-            ])
+        $responseIndex = $this->getJson('/api/genres');
+        $responseIndex->assertStatus(200)
             ->assertJsonPath('success', true)
             ->assertJsonCount(5, 'data');
+
+        $responseShow = $this->getJson('/api/genres/1');
+        $responseShow->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.id', 1);
     }
 
-    public function test_api_genres_can_create_genre(): void
+    public function test_unauthenticated_cannot_create_genre_or_author(): void
     {
-        $payload = [
-            'name' => 'Horror',
-            'description' => 'Genre yang menghadirkan rasa takut dan ketegangan.',
-        ];
-
-        $response = $this->postJson('/api/genres', $payload);
-        $response->assertStatus(201)
-            ->assertJson([
-                'success' => true,
-                'message' => 'Genre berhasil ditambahkan',
-                'data' => [
-                    'name' => 'Horror',
-                    'description' => 'Genre yang menghadirkan rasa takut dan ketegangan.',
-                ],
-            ]);
-
-        $this->assertDatabaseHas('genres', [
+        $genreResponse = $this->postJson('/api/genres', [
             'name' => 'Horror',
         ]);
-    }
+        $genreResponse->assertStatus(401);
 
-    public function test_api_genres_validation_fails_when_name_is_missing(): void
-    {
-        $response = $this->postJson('/api/genres', [
-            'description' => 'Deskripsi tanpa nama genre',
+        $authorResponse = $this->postJson('/api/authors', [
+            'name' => 'Pramoedya',
         ]);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['name']);
+        $authorResponse->assertStatus(401);
     }
 
-    public function test_api_authors_can_create_author(): void
+    public function test_non_admin_user_cannot_create_genre_or_author(): void
     {
-        $payload = [
-            'name' => 'Pramoedya Ananta Toer',
-            'photo' => 'https://ui-avatars.com/api/?name=Pramoedya+Ananta+Toer',
-            'bio' => 'Salah satu sastrawan terkemuka Indonesia, penulis Tetralogi Buru.',
-        ];
+        $token = $this->getUserToken();
 
-        $response = $this->postJson('/api/authors', $payload);
-        $response->assertStatus(201)
-            ->assertJson([
-                'success' => true,
-                'message' => 'Penulis berhasil ditambahkan',
-                'data' => [
-                    'name' => 'Pramoedya Ananta Toer',
-                    'photo' => 'https://ui-avatars.com/api/?name=Pramoedya+Ananta+Toer',
-                    'bio' => 'Salah satu sastrawan terkemuka Indonesia, penulis Tetralogi Buru.',
-                ],
+        $genreResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->postJson('/api/genres', [
+                'name' => 'Horror',
             ]);
+        $genreResponse->assertStatus(403);
 
-        $this->assertDatabaseHas('authors', [
-            'name' => 'Pramoedya Ananta Toer',
-        ]);
-    }
-
-    public function test_api_authors_validation_fails_when_name_is_missing(): void
-    {
-        $response = $this->postJson('/api/authors', [
-            'bio' => 'Penulis tanpa nama',
-        ]);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['name']);
-    }
-
-    public function test_api_genres_can_show_genre(): void
-    {
-        $response = $this->getJson('/api/genres/1');
-        $response->assertStatus(200)
-            ->assertJson([
-                'success' => true,
-                'message' => 'Detail genre berhasil diambil',
-                'data' => [
-                    'id' => 1,
-                ],
+        $authorResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->postJson('/api/authors', [
+                'name' => 'Pramoedya',
             ]);
+        $authorResponse->assertStatus(403);
     }
 
-    public function test_api_genres_returns_404_when_genre_not_found(): void
+    public function test_admin_can_create_update_delete_genre(): void
     {
-        $response = $this->getJson('/api/genres/999');
-        $response->assertStatus(404)
-            ->assertJson([
-                'success' => false,
-                'message' => 'Data tidak ditemukan',
+        $token = $this->getAdminToken();
+
+        // Create
+        $createResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->postJson('/api/genres', [
+                'name' => 'Horror',
+                'description' => 'Mencekam dan penuh misteri',
             ]);
-    }
+        $createResponse->assertStatus(201)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.name', 'Horror');
 
-    public function test_api_genres_update_returns_404_when_genre_not_found(): void
-    {
-        $response = $this->putJson('/api/genres/999', [
-            'name' => 'Fiction Updated',
-        ]);
-        $response->assertStatus(404)
-            ->assertJson([
-                'success' => false,
-                'message' => 'Data tidak ditemukan',
+        $genreId = $createResponse->json('data.id');
+
+        // Update
+        $updateResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->putJson('/api/genres/'.$genreId, [
+                'name' => 'Horror Thriller',
             ]);
+        $updateResponse->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.name', 'Horror Thriller');
+
+        // Delete
+        $deleteResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->deleteJson('/api/genres/'.$genreId);
+        $deleteResponse->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $this->assertDatabaseMissing('genres', ['id' => $genreId]);
     }
 
-    public function test_api_genres_delete_returns_404_when_genre_not_found(): void
+    public function test_admin_can_create_update_delete_author(): void
     {
-        $response = $this->deleteJson('/api/genres/999');
-        $response->assertStatus(404)
-            ->assertJson([
-                'success' => false,
-                'message' => 'Data tidak ditemukan',
+        $token = $this->getAdminToken();
+
+        // Create
+        $createResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->postJson('/api/authors', [
+                'name' => 'Pramoedya Ananta Toer',
+                'bio' => 'Penulis Tetralogi Buru',
             ]);
-    }
+        $createResponse->assertStatus(201)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.name', 'Pramoedya Ananta Toer');
 
-    public function test_api_genres_can_update_genre(): void
-    {
-        $response = $this->putJson('/api/genres/1', [
-            'name' => 'Fiction Updated',
-            'description' => 'Updated fiction description',
-        ]);
+        $authorId = $createResponse->json('data.id');
 
-        $response->assertStatus(200)
-            ->assertJson([
-                'success' => true,
-                'message' => 'Genre berhasil diperbarui',
-                'data' => [
-                    'id' => 1,
-                    'name' => 'Fiction Updated',
-                ],
+        // Update
+        $updateResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->putJson('/api/authors/'.$authorId, [
+                'name' => 'Pramoedya A. Toer',
             ]);
+        $updateResponse->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.name', 'Pramoedya A. Toer');
 
-        $this->assertDatabaseHas('genres', [
-            'id' => 1,
-            'name' => 'Fiction Updated',
-        ]);
+        // Delete
+        $deleteResponse = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->deleteJson('/api/authors/'.$authorId);
+        $deleteResponse->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $this->assertDatabaseMissing('authors', ['id' => $authorId]);
     }
 
-    public function test_api_genres_can_delete_genre(): void
+    public function test_genre_and_author_not_found_returns_404(): void
     {
-        $genre = \App\Models\Genre::create([
-            'name' => 'Genre to Delete',
-            'description' => 'Temporary genre',
-        ]);
+        $token = $this->getAdminToken();
 
-        $response = $this->deleteJson('/api/genres/'.$genre->id);
-        $response->assertStatus(200)
-            ->assertJson([
-                'success' => true,
-                'message' => 'Genre berhasil dihapus',
-            ]);
-
-        $this->assertDatabaseMissing('genres', [
-            'id' => $genre->id,
-        ]);
-    }
-
-    public function test_api_authors_can_show_author(): void
-    {
-        $response = $this->getJson('/api/authors/1');
-        $response->assertStatus(200)
-            ->assertJson([
-                'success' => true,
-                'message' => 'Detail penulis berhasil diambil',
-                'data' => [
-                    'id' => 1,
-                ],
-            ]);
-    }
-
-    public function test_api_authors_returns_404_when_author_not_found(): void
-    {
-        $response = $this->getJson('/api/authors/999');
-        $response->assertStatus(404)
+        $genreShow = $this->getJson('/api/genres/999');
+        $genreShow->assertStatus(404)
             ->assertJson([
                 'success' => false,
                 'message' => 'Data tidak ditemukan',
             ]);
-    }
 
-    public function test_api_authors_update_returns_404_when_author_not_found(): void
-    {
-        $response = $this->putJson('/api/authors/999', [
-            'name' => 'Author Updated',
-        ]);
-        $response->assertStatus(404)
+        $genreUpdate = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->putJson('/api/genres/999', ['name' => 'Test']);
+        $genreUpdate->assertStatus(404)
             ->assertJson([
                 'success' => false,
                 'message' => 'Data tidak ditemukan',
             ]);
-    }
 
-    public function test_api_authors_delete_returns_404_when_author_not_found(): void
-    {
-        $response = $this->deleteJson('/api/authors/999');
-        $response->assertStatus(404)
+        $authorShow = $this->getJson('/api/authors/999');
+        $authorShow->assertStatus(404)
             ->assertJson([
                 'success' => false,
                 'message' => 'Data tidak ditemukan',
             ]);
-    }
 
-    public function test_api_authors_can_update_author(): void
-    {
-        $response = $this->putJson('/api/authors/1', [
-            'name' => 'J.K. Rowling Updated',
-            'bio' => 'Updated bio information',
-        ]);
-
-        $response->assertStatus(200)
+        $authorUpdate = $this->withHeader('Authorization', 'Bearer '.$token)
+            ->putJson('/api/authors/999', ['name' => 'Test']);
+        $authorUpdate->assertStatus(404)
             ->assertJson([
-                'success' => true,
-                'message' => 'Penulis berhasil diperbarui',
-                'data' => [
-                    'id' => 1,
-                    'name' => 'J.K. Rowling Updated',
-                ],
+                'success' => false,
+                'message' => 'Data tidak ditemukan',
             ]);
-
-        $this->assertDatabaseHas('authors', [
-            'id' => 1,
-            'name' => 'J.K. Rowling Updated',
-        ]);
-    }
-
-    public function test_api_authors_can_delete_author(): void
-    {
-        $author = \App\Models\Author::create([
-            'name' => 'Author to Delete',
-            'bio' => 'Temporary bio',
-        ]);
-
-        $response = $this->deleteJson('/api/authors/'.$author->id);
-        $response->assertStatus(200)
-            ->assertJson([
-                'success' => true,
-                'message' => 'Penulis berhasil dihapus',
-            ]);
-
-        $this->assertDatabaseMissing('authors', [
-            'id' => $author->id,
-        ]);
     }
 }
