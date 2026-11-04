@@ -15,14 +15,14 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
-            'role' => 'nullable|string|in:admin,user',
+            'role' => 'nullable|string|in:admin,customer,user',
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => $validated['role'] ?? 'user',
+            'role' => $validated['role'] ?? 'customer',
         ]);
 
         $token = auth('api')->login($user);
@@ -62,6 +62,15 @@ class AuthController extends Controller
                 'token_type' => 'bearer',
                 'expires_in' => auth('api')->factory()->getTTL() * 60,
             ],
+        ], 200);
+    }
+
+    public function me(): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'message' => 'Data user berhasil diambil',
+            'data' => auth('api')->user(),
         ], 200);
     }
 

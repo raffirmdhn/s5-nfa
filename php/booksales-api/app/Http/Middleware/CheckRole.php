@@ -13,14 +13,30 @@ class CheckRole
      *
      * @param  Closure(Request): (Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         $user = auth('api')->user();
 
-        if (! $user || $user->role !== $role) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized: Akses hanya untuk '.$role,
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        $allowedRoles = [];
+        foreach ($roles as $role) {
+            $allowedRoles = array_merge($allowedRoles, explode(',', $role));
+        }
+
+        if (in_array('customer', $allowedRoles) && ! in_array('user', $allowedRoles)) {
+            $allowedRoles[] = 'user';
+        }
+
+        if (! in_array($user->role, $allowedRoles)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized: Akses hanya untuk '.implode(', ', $roles),
             ], 403);
         }
 

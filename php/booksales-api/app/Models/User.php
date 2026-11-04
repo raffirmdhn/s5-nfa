@@ -49,6 +49,11 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'customer_id');
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();

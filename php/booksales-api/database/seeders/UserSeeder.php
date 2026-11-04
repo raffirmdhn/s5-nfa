@@ -10,7 +10,7 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::firstOrCreate(
+        User::updateOrCreate(
             ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Admin BookSales',
@@ -19,14 +19,22 @@ class UserSeeder extends Seeder
             ]
         );
 
-        User::firstOrCreate(
+        User::updateOrCreate(
+            ['email' => 'customer@gmail.com'],
+            [
+                'name' => 'Customer BookSales',
+                'password' => Hash::make('password123'),
+                'role' => 'customer',
+            ]
+        );
+
+        User::updateOrCreate(
             ['email' => 'user@gmail.com'],
             [
                 'name' => 'Regular User',
                 'password' => Hash::make('password123'),
-                'role' => 'user',
+                'role' => 'customer',
             ]
         );
     }
 }
-
