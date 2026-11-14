@@ -1,8 +1,8 @@
 import { Navigate, useLocation, Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
-export default function ProtectedRoute({ children, requireAdmin = true }) {
-  const { isAuthenticated, isAdmin, loading } = useAuth()
+export default function ProtectedRoute({ children, allowedRoles = null, requireAdmin = false }) {
+  const { isAuthenticated, user, hasRole, isAdmin, loading } = useAuth()
   const location = useLocation()
 
   if (loading) {
@@ -17,7 +17,15 @@ export default function ProtectedRoute({ children, requireAdmin = true }) {
     return <Navigate to="/login" state={{ from: location }} replace />
   }
 
-  if (requireAdmin && !isAdmin) {
+  // Check role authorization
+  let isAuthorized = true
+  if (allowedRoles) {
+    isAuthorized = hasRole(allowedRoles)
+  } else if (requireAdmin) {
+    isAuthorized = isAdmin
+  }
+
+  if (!isAuthorized) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-paper-white p-6 text-center">
         <h1 className="text-xl font-semibold text-obsidian mb-2">Halaman Tidak Tersedia</h1>

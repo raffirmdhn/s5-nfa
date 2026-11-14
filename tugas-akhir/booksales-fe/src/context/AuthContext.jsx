@@ -84,6 +84,16 @@ export function AuthProvider({ children }) {
   }
 
   const isAdmin = user?.role === 'admin'
+  const isCustomer = user?.role === 'customer' || user?.role === 'user'
+  const isGuest = !token
+
+  const hasRole = (roles) => {
+    if (!user || !user.role) return false
+    if (Array.isArray(roles)) {
+      return roles.includes(user.role)
+    }
+    return user.role === roles
+  }
 
   return (
     <AuthContext.Provider
@@ -96,6 +106,9 @@ export function AuthProvider({ children }) {
         logout,
         isAuthenticated: !!token,
         isAdmin,
+        isCustomer,
+        isGuest,
+        hasRole,
       }}
     >
       {children}

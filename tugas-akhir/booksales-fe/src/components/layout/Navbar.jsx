@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { ShieldCheck, LogIn, UserPlus, LogOut } from 'lucide-react'
+import { ShieldCheck, LogIn, UserPlus, LogOut, User } from 'lucide-react'
 
 export default function Navbar() {
   const { user, isAuthenticated, isAdmin, logout } = useAuth()
@@ -40,7 +40,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2">
           {isAuthenticated && isAdmin && (
             <Link
-              to="/admin/genres"
+              to="/admin/dashboard"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-paper-white text-obsidian border border-hairline hover:border-smoke rounded-md transition-colors shadow-xs"
             >
               <ShieldCheck size={14} className="text-terminal-green" />
@@ -50,9 +50,18 @@ export default function Navbar() {
 
           {isAuthenticated ? (
             <div className="flex items-center gap-2 pl-2 border-l border-hairline">
-              <span className="text-xs text-charcoal font-mono hidden md:inline">
-                {user?.name || user?.email}
-              </span>
+              <Link
+                to="/profile"
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs transition-colors ${
+                  isActive('/profile')
+                    ? 'bg-hairline/70 text-obsidian font-medium'
+                    : 'text-charcoal hover:text-obsidian hover:bg-hairline/40'
+                }`}
+                title="Profil Pengguna"
+              >
+                <User size={13} />
+                <span className="hidden sm:inline font-mono">{user?.name || user?.email}</span>
+              </Link>
               <button
                 type="button"
                 onClick={logout}
