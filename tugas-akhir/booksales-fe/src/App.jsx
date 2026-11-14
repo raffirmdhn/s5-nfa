@@ -1,32 +1,47 @@
-import { useState } from 'react'
-import { Routes, Route } from 'react-router-dom'
-import initialBooks from './utils/books'
-import Navbar from './components/Navbar'
-import Home from './components/Home'
-import Book from './components/Book'
-import NotFound from './components/NotFound'
-import Footer from './components/Footer'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext'
+import StoreLayout from './components/layout/StoreLayout'
+import AdminLayout from './components/layout/AdminLayout'
+import ProtectedRoute from './components/layout/ProtectedRoute'
+
+import Home from './pages/Home'
+import Books from './pages/Books'
+import Login from './pages/Login'
+import NotFound from './pages/NotFound'
+
+import AdminDashboard from './pages/admin/AdminDashboard'
+import AdminGenres from './pages/admin/AdminGenres'
+import AdminAuthors from './pages/admin/AdminAuthors'
 
 function App() {
-  const [books, setBooks] = useState(initialBooks)
-
-  const handleAddBook = (newBook) => {
-    setBooks((prevBooks) => [newBook, ...prevBooks])
-  }
-
   return (
-    <div className="d-flex flex-column min-vh-100">
-      <Navbar totalBooks={books.length} />
-      <main className="flex-grow-1">
-        <Routes>
-          <Route path="/" element={<Home books={books} />} />
-          <Route path="/book" element={<Book books={books} onAddBook={handleAddBook} />} />
-          <Route path="/books" element={<Book books={books} onAddBook={handleAddBook} />} />
+    <AuthProvider>
+      <Routes>
+        {/* Storefront / Public Routes */}
+        <Route element={<StoreLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/books" element={<Books />} />
+          <Route path="/book" element={<Navigate to="/books" replace />} />
+          <Route path="/login" element={<Login />} />
           <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
-      <Footer />
-    </div>
+        </Route>
+
+        {/* Protected Admin Routes */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Navigate to="/admin/genres" replace />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="genres" element={<AdminGenres />} />
+          <Route path="authors" element={<AdminAuthors />} />
+        </Route>
+      </Routes>
+    </AuthProvider>
   )
 }
 
