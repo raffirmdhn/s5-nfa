@@ -1,14 +1,31 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Modal from '../common/Modal'
 import authorService from '../../services/authorService'
 import { Loader2 } from 'lucide-react'
 
-export default function AuthorModal({ isOpen, onClose, onSuccess }) {
+export default function AuthorModal({ isOpen, onClose, onSuccess, itemToEdit = null }) {
   const [name, setName] = useState('')
   const [photo, setPhoto] = useState('')
   const [bio, setBio] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+
+  const isEditMode = Boolean(itemToEdit)
+
+  useEffect(() => {
+    if (isOpen) {
+      if (itemToEdit) {
+        setName(itemToEdit.name || '')
+        setPhoto(itemToEdit.photo || '')
+        setBio(itemToEdit.bio || '')
+      } else {
+        setName('')
+        setPhoto('')
+        setBio('')
+      }
+      setError(null)
+    }
+  }, [isOpen, itemToEdit])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -20,22 +37,28 @@ export default function AuthorModal({ isOpen, onClose, onSuccess }) {
     setLoading(true)
     setError(null)
 
+    const payload = {
+      name: name.trim(),
+      photo: photo.trim() || null,
+      bio: bio.trim() || null,
+    }
+
     try {
-      await authorService.createAuthor({
-        name: name.trim(),
-        photo: photo.trim() || null,
-        bio: bio.trim() || null,
-      })
-      setName('')
-      setPhoto('')
-      setBio('')
-      onSuccess?.()
-      onClose()
+      if (isEditMode) {
+        await authorService.updateAuthor(itemToEdit.id, payload)
+        onSuccess?.('Penulis berhasil diperbarui!')
+      } else {
+        await authorService.createAuthor(payload)
+        onSuccess?.('Penulis baru berhasil ditambahkan!')
+      }
+      handleClose()
     } catch (err) {
       const msg =
         err.response?.data?.message ||
         (err.response?.data?.errors
           ? Object.values(err.response.data.errors).flat().join(', ')
+          : isEditMode
+          ? 'Gagal memperbarui penulis.'
           : 'Gagal menambahkan penulis.')
       setError(msg)
     } finally {
@@ -52,7 +75,11 @@ export default function AuthorModal({ isOpen, onClose, onSuccess }) {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Tambah Penulis Baru">
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={isEditMode ? 'Perbarui Penulis' : 'Tambah Penulis Baru'}
+    >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
           <div className="p-3 text-xs bg-red-50 text-red-700 border border-red-200 rounded-md">
@@ -112,14 +139,17 @@ export default function AuthorModal({ isOpen, onClose, onSuccess }) {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-pure-white bg-obsidian hover:bg-carbon rounded-md transition-colors disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-pure-white bg-obsidian hover:bg-carbon rounded-md transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
           >
             {loading && <Loader2 size={13} className="animate-spin" />}
-            {loading ? 'Menyimpan...' : 'Simpan Penulis'}
+            {loading
+              ? 'Menyimpan...'
+              : isEditMode
+              ? 'Simpan Perubahan'
+              : 'Simpan Penulis'}
           </button>
         </div>
       </form>
     </Modal>
   )
 }
-

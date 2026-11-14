@@ -1,15 +1,24 @@
 import { useState, useEffect } from 'react'
 import authorService from '../../services/authorService'
 import AuthorModal from '../../components/admin/AuthorModal'
-import { Plus, Search, Users, RefreshCw, AlertCircle, CheckCircle2, User } from 'lucide-react'
+import DeleteConfirmModal from '../../components/common/DeleteConfirmModal'
+import { Plus, Search, Users, RefreshCw, AlertCircle, CheckCircle2, User, Pencil, Trash2 } from 'lucide-react'
 
 export default function AdminAuthors() {
   const [authors, setAuthors] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [search, setSearch] = useState('')
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const [notification, setNotification] = useState(null)
+
+  // Edit / Create Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [itemToEdit, setItemToEdit] = useState(null)
+
+  // Delete Modal State
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [authorToDelete, setAuthorToDelete] = useState(null)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   const fetchAuthors = async () => {
     setLoading(true)
@@ -28,12 +37,48 @@ export default function AdminAuthors() {
     fetchAuthors()
   }, [])
 
-  const handleSuccess = () => {
-    fetchAuthors()
-    setNotification('Penulis baru berhasil ditambahkan!')
+  const showToast = (message) => {
+    setNotification(message)
     setTimeout(() => {
       setNotification(null)
     }, 4000)
+  }
+
+  const handleOpenCreate = () => {
+    setItemToEdit(null)
+    setIsModalOpen(true)
+  }
+
+  const handleOpenEdit = (author) => {
+    setItemToEdit(author)
+    setIsModalOpen(true)
+  }
+
+  const handleOpenDelete = (author) => {
+    setAuthorToDelete(author)
+    setIsDeleteModalOpen(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!authorToDelete) return
+    setDeleteLoading(true)
+    try {
+      await authorService.deleteAuthor(authorToDelete.id)
+      setIsDeleteModalOpen(false)
+      showToast(`Penulis "${authorToDelete.name}" berhasil dihapus!`)
+      fetchAuthors()
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Gagal menghapus penulis.'
+      alert(msg)
+    } finally {
+      setDeleteLoading(false)
+      setAuthorToDelete(null)
+    }
+  }
+
+  const handleSuccess = (msg) => {
+    fetchAuthors()
+    showToast(msg || 'Data penulis berhasil diperbarui!')
   }
 
   const filteredAuthors = authors.filter((a) =>
@@ -63,13 +108,13 @@ export default function AdminAuthors() {
             </span>
           </div>
           <p className="text-xs text-stone mt-1">
-            Kelola data dan biografi penulis buku di BookSales.
+            Kelola, perbarui, dan hapus profil penulis buku pada platform BookSales.
           </p>
         </div>
 
         <button
           type="button"
-          onClick={() => setIsModalOpen(true)}
+          onClick={handleOpenCreate}
           className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-pure-white bg-obsidian hover:bg-carbon rounded-md transition-colors shadow-xs cursor-pointer"
         >
           <Plus size={14} />
@@ -134,7 +179,8 @@ export default function AdminAuthors() {
                 <th className="py-3 px-4 w-16">ID</th>
                 <th className="py-3 px-4">Penulis</th>
                 <th className="py-3 px-4">Biografi</th>
-                <th className="py-3 px-4 w-36">Dibuat Pada</th>
+                <th className="py-3 px-4 w-32">Dibuat Pada</th>
+                <th className="py-3 px-4 w-28 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-hairline">
@@ -145,11 +191,12 @@ export default function AdminAuthors() {
                     <td className="py-3.5 px-4"><div className="h-8 w-36 bg-hairline rounded" /></td>
                     <td className="py-3.5 px-4"><div className="h-3 w-48 bg-hairline rounded" /></td>
                     <td className="py-3.5 px-4"><div className="h-3 w-20 bg-hairline rounded" /></td>
+                    <td className="py-3.5 px-4 text-right"><div className="h-3 w-12 bg-hairline rounded ml-auto" /></td>
                   </tr>
                 ))
               ) : filteredAuthors.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="py-12 text-center text-stone">
+                  <td colSpan={5} className="py-12 text-center text-stone">
                     <Users size={24} className="mx-auto mb-2 text-ash" />
                     <p className="font-medium text-charcoal">Tidak ada penulis yang ditemukan</p>
                     <p className="text-[11px] mt-0.5">
@@ -172,13 +219,13 @@ export default function AdminAuthors() {
                           <img
                             src={author.photo}
                             alt={author.name}
-                            className="w-8 h-8 rounded-full object-cover border border-hairline bg-paper-white"
+                            className="w-8 h-8 rounded-full object-cover border border-hairline bg-paper-white shrink-0"
                             onError={(e) => {
                               e.currentTarget.style.display = 'none'
                             }}
                           />
                         ) : (
-                          <div className="w-8 h-8 rounded-full bg-hairline flex items-center justify-center text-stone font-mono text-xs">
+                          <div className="w-8 h-8 rounded-full bg-hairline flex items-center justify-center text-stone font-mono text-xs shrink-0">
                             {author.name ? author.name.charAt(0).toUpperCase() : <User size={13} />}
                           </div>
                         )}
@@ -200,6 +247,26 @@ export default function AdminAuthors() {
                     <td className="py-3 px-4 font-mono text-stone text-[11px]">
                       {formatDate(author.created_at)}
                     </td>
+                    <td className="py-3 px-4 text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenEdit(author)}
+                          title="Perbarui Penulis"
+                          className="p-1.5 text-stone hover:text-obsidian hover:bg-hairline/60 rounded transition-colors cursor-pointer"
+                        >
+                          <Pencil size={14} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenDelete(author)}
+                          title="Hapus Penulis"
+                          className="p-1.5 text-stone hover:text-red-600 hover:bg-red-50 rounded transition-colors cursor-pointer"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))
               )}
@@ -208,11 +275,29 @@ export default function AdminAuthors() {
         </div>
       </div>
 
-      {/* Create Modal */}
+      {/* Dual-Mode Create / Edit Modal */}
       <AuthorModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        itemToEdit={itemToEdit}
+        onClose={() => {
+          setIsModalOpen(false)
+          setItemToEdit(null)
+        }}
         onSuccess={handleSuccess}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        itemName={authorToDelete?.name}
+        title="Hapus Data Penulis"
+        description="Apakah Anda yakin ingin menghapus penulis ini? Buku-buku karya penulis ini dapat terhapus secara permanen dari sistem."
+        loading={deleteLoading}
+        onClose={() => {
+          setIsDeleteModalOpen(false)
+          setAuthorToDelete(null)
+        }}
+        onConfirm={handleConfirmDelete}
       />
     </div>
   )

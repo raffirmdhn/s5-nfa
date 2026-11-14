@@ -1,13 +1,28 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Modal from '../common/Modal'
 import genreService from '../../services/genreService'
 import { Loader2 } from 'lucide-react'
 
-export default function GenreModal({ isOpen, onClose, onSuccess }) {
+export default function GenreModal({ isOpen, onClose, onSuccess, itemToEdit = null }) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+
+  const isEditMode = Boolean(itemToEdit)
+
+  useEffect(() => {
+    if (isOpen) {
+      if (itemToEdit) {
+        setName(itemToEdit.name || '')
+        setDescription(itemToEdit.description || '')
+      } else {
+        setName('')
+        setDescription('')
+      }
+      setError(null)
+    }
+  }, [isOpen, itemToEdit])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -19,20 +34,27 @@ export default function GenreModal({ isOpen, onClose, onSuccess }) {
     setLoading(true)
     setError(null)
 
+    const payload = {
+      name: name.trim(),
+      description: description.trim() || null,
+    }
+
     try {
-      await genreService.createGenre({
-        name: name.trim(),
-        description: description.trim() || null,
-      })
-      setName('')
-      setDescription('')
-      onSuccess?.()
-      onClose()
+      if (isEditMode) {
+        await genreService.updateGenre(itemToEdit.id, payload)
+        onSuccess?.('Genre berhasil diperbarui!')
+      } else {
+        await genreService.createGenre(payload)
+        onSuccess?.('Genre baru berhasil ditambahkan!')
+      }
+      handleClose()
     } catch (err) {
       const msg =
         err.response?.data?.message ||
         (err.response?.data?.errors
           ? Object.values(err.response.data.errors).flat().join(', ')
+          : isEditMode
+          ? 'Gagal memperbarui genre.'
           : 'Gagal menambahkan genre.')
       setError(msg)
     } finally {
@@ -48,7 +70,11 @@ export default function GenreModal({ isOpen, onClose, onSuccess }) {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Tambah Genre Baru">
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={isEditMode ? 'Perbarui Genre' : 'Tambah Genre Baru'}
+    >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
           <div className="p-3 text-xs bg-red-50 text-red-700 border border-red-200 rounded-md">
@@ -95,14 +121,17 @@ export default function GenreModal({ isOpen, onClose, onSuccess }) {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-pure-white bg-obsidian hover:bg-carbon rounded-md transition-colors disabled:opacity-50 cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-pure-white bg-obsidian hover:bg-carbon rounded-md transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
           >
             {loading && <Loader2 size={13} className="animate-spin" />}
-            {loading ? 'Menyimpan...' : 'Simpan Genre'}
+            {loading
+              ? 'Menyimpan...'
+              : isEditMode
+              ? 'Simpan Perubahan'
+              : 'Simpan Genre'}
           </button>
         </div>
       </form>
     </Modal>
   )
 }
-

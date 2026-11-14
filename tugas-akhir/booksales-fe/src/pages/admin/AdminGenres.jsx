@@ -1,15 +1,24 @@
 import { useState, useEffect } from 'react'
 import genreService from '../../services/genreService'
 import GenreModal from '../../components/admin/GenreModal'
-import { Plus, Search, Bookmark, RefreshCw, AlertCircle, CheckCircle2 } from 'lucide-react'
+import DeleteConfirmModal from '../../components/common/DeleteConfirmModal'
+import { Plus, Search, Bookmark, RefreshCw, AlertCircle, CheckCircle2, Pencil, Trash2 } from 'lucide-react'
 
 export default function AdminGenres() {
   const [genres, setGenres] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [search, setSearch] = useState('')
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const [notification, setNotification] = useState(null)
+
+  // Edit / Create Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [itemToEdit, setItemToEdit] = useState(null)
+
+  // Delete Modal State
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [genreToDelete, setGenreToDelete] = useState(null)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   const fetchGenres = async () => {
     setLoading(true)
@@ -28,12 +37,48 @@ export default function AdminGenres() {
     fetchGenres()
   }, [])
 
-  const handleSuccess = () => {
-    fetchGenres()
-    setNotification('Genre baru berhasil ditambahkan!')
+  const showToast = (message) => {
+    setNotification(message)
     setTimeout(() => {
       setNotification(null)
     }, 4000)
+  }
+
+  const handleOpenCreate = () => {
+    setItemToEdit(null)
+    setIsModalOpen(true)
+  }
+
+  const handleOpenEdit = (genre) => {
+    setItemToEdit(genre)
+    setIsModalOpen(true)
+  }
+
+  const handleOpenDelete = (genre) => {
+    setGenreToDelete(genre)
+    setIsDeleteModalOpen(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!genreToDelete) return
+    setDeleteLoading(true)
+    try {
+      await genreService.deleteGenre(genreToDelete.id)
+      setIsDeleteModalOpen(false)
+      showToast(`Genre "${genreToDelete.name}" berhasil dihapus!`)
+      fetchGenres()
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Gagal menghapus genre.'
+      alert(msg)
+    } finally {
+      setDeleteLoading(false)
+      setGenreToDelete(null)
+    }
+  }
+
+  const handleSuccess = (msg) => {
+    fetchGenres()
+    showToast(msg || 'Data genre berhasil diperbarui!')
   }
 
   const filteredGenres = genres.filter((g) =>
@@ -63,13 +108,13 @@ export default function AdminGenres() {
             </span>
           </div>
           <p className="text-xs text-stone mt-1">
-            Kelola kategori dan klasifikasi buku pada platform BookSales.
+            Kelola, perbarui, dan hapus kategori buku pada platform BookSales.
           </p>
         </div>
 
         <button
           type="button"
-          onClick={() => setIsModalOpen(true)}
+          onClick={handleOpenCreate}
           className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-pure-white bg-obsidian hover:bg-carbon rounded-md transition-colors shadow-xs cursor-pointer"
         >
           <Plus size={14} />
@@ -134,7 +179,8 @@ export default function AdminGenres() {
                 <th className="py-3 px-4 w-16">ID</th>
                 <th className="py-3 px-4">Nama Genre</th>
                 <th className="py-3 px-4">Deskripsi</th>
-                <th className="py-3 px-4 w-36">Dibuat Pada</th>
+                <th className="py-3 px-4 w-32">Dibuat Pada</th>
+                <th className="py-3 px-4 w-28 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-hairline">
@@ -145,11 +191,12 @@ export default function AdminGenres() {
                     <td className="py-3.5 px-4"><div className="h-3 w-32 bg-hairline rounded" /></td>
                     <td className="py-3.5 px-4"><div className="h-3 w-48 bg-hairline rounded" /></td>
                     <td className="py-3.5 px-4"><div className="h-3 w-20 bg-hairline rounded" /></td>
+                    <td className="py-3.5 px-4 text-right"><div className="h-3 w-12 bg-hairline rounded ml-auto" /></td>
                   </tr>
                 ))
               ) : filteredGenres.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="py-12 text-center text-stone">
+                  <td colSpan={5} className="py-12 text-center text-stone">
                     <Bookmark size={24} className="mx-auto mb-2 text-ash" />
                     <p className="font-medium text-charcoal">Tidak ada genre yang ditemukan</p>
                     <p className="text-[11px] mt-0.5">
@@ -177,6 +224,26 @@ export default function AdminGenres() {
                     <td className="py-3 px-4 font-mono text-stone text-[11px]">
                       {formatDate(genre.created_at)}
                     </td>
+                    <td className="py-3 px-4 text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenEdit(genre)}
+                          title="Perbarui Genre"
+                          className="p-1.5 text-stone hover:text-obsidian hover:bg-hairline/60 rounded transition-colors cursor-pointer"
+                        >
+                          <Pencil size={14} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenDelete(genre)}
+                          title="Hapus Genre"
+                          className="p-1.5 text-stone hover:text-red-600 hover:bg-red-50 rounded transition-colors cursor-pointer"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))
               )}
@@ -185,11 +252,29 @@ export default function AdminGenres() {
         </div>
       </div>
 
-      {/* Create Modal */}
+      {/* Dual-Mode Create / Edit Modal */}
       <GenreModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        itemToEdit={itemToEdit}
+        onClose={() => {
+          setIsModalOpen(false)
+          setItemToEdit(null)
+        }}
         onSuccess={handleSuccess}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        itemName={genreToDelete?.name}
+        title="Hapus Data Genre"
+        description="Apakah Anda yakin ingin menghapus genre ini? Buku-buku yang terikat dengan genre ini dapat terhapus secara permanen."
+        loading={deleteLoading}
+        onClose={() => {
+          setIsDeleteModalOpen(false)
+          setGenreToDelete(null)
+        }}
+        onConfirm={handleConfirmDelete}
       />
     </div>
   )

@@ -15,7 +15,16 @@ export const authorService = {
     const response = await api.post('/authors', payload)
     return response.data
   },
+
+  async updateAuthor(id, payload) {
+    const response = await api.put(`/authors/${id}`, payload)
+    return response.data
+  },
+
+  async deleteAuthor(id) {
+    const response = await api.delete(`/authors/${id}`)
+    return response.data
+  },
 }
 
 export default authorService
-

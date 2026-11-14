@@ -15,7 +15,16 @@ export const genreService = {
     const response = await api.post('/genres', payload)
     return response.data
   },
+
+  async updateGenre(id, payload) {
+    const response = await api.put(`/genres/${id}`, payload)
+    return response.data
+  },
+
+  async deleteGenre(id) {
+    const response = await api.delete(`/genres/${id}`)
+    return response.data
+  },
 }
 
 export default genreService
-
