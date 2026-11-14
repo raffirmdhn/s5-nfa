@@ -1,6 +1,11 @@
 import api from './api'
 
 export const authService = {
+  async register(payload) {
+    const response = await api.post('/register', payload)
+    return response.data
+  },
+
   async login(email, password) {
     const response = await api.post('/login', { email, password })
     return response.data
@@ -25,4 +30,3 @@ export const authService = {
 }
 
 export default authService
-

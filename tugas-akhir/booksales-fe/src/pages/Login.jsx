@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Lock, Mail, ArrowRight, Loader2, Sparkles } from 'lucide-react'
 
@@ -117,6 +117,16 @@ export default function Login() {
             <div className="text-[11px] text-graphite font-mono mt-2">
               admin@gmail.com / password123
             </div>
+          </div>
+
+          {/* Link to Register */}
+          <div className="mt-5 pt-4 border-t border-hairline text-center">
+            <p className="text-xs text-stone">
+              Belum memiliki akun?{' '}
+              <Link to="/register" className="font-medium text-obsidian hover:underline">
+                Daftar sekarang
+              </Link>
+            </p>
           </div>
         </div>
       </div>

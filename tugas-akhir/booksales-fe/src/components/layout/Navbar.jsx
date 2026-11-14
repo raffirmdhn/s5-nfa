@@ -1,13 +1,13 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { ShieldCheck, LogIn, LogOut } from 'lucide-react'
+import { ShieldCheck, LogIn, UserPlus, LogOut } from 'lucide-react'
 
 export default function Navbar() {
   const { user, isAuthenticated, isAdmin, logout } = useAuth()
   const location = useLocation()
 
   const isActive = (path) => location.pathname === path
-  const isLoginPage = location.pathname === '/login'
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
 
   return (
     <header className="sticky top-0 z-40 bg-pure-white/90 backdrop-blur-md border-b border-hairline w-full">
@@ -62,15 +62,31 @@ export default function Navbar() {
                 <LogOut size={15} />
               </button>
             </div>
-          ) : !isLoginPage ? (
+          ) : !isAuthPage ? (
+            <div className="flex items-center gap-2">
+              <Link
+                to="/login"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-charcoal hover:text-obsidian hover:bg-hairline/50 rounded-md transition-colors"
+              >
+                <LogIn size={13} />
+                <span>Masuk</span>
+              </Link>
+              <Link
+                to="/register"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-pure-white bg-obsidian hover:bg-carbon rounded-md transition-colors shadow-xs"
+              >
+                <UserPlus size={13} />
+                <span>Daftar</span>
+              </Link>
+            </div>
+          ) : (
             <Link
-              to="/login"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-pure-white bg-obsidian hover:bg-carbon rounded-md transition-colors shadow-xs"
+              to={location.pathname === '/login' ? '/register' : '/login'}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-charcoal hover:text-obsidian hover:bg-hairline/50 rounded-md transition-colors"
             >
-              <LogIn size={13} />
-              <span>Masuk Admin</span>
+              {location.pathname === '/login' ? 'Daftar Akun' : 'Masuk Akun'}
             </Link>
-          ) : null}
+          )}
         </div>
       </div>
     </header>

@@ -49,6 +49,32 @@ export function AuthProvider({ children }) {
     }
   }
 
+  const register = async (userData) => {
+    setLoading(true)
+    try {
+      const res = await authService.register(userData)
+      const data = res.data
+      const receivedToken = data.token
+      const receivedUser = data.user
+
+      setToken(receivedToken)
+      setUser(receivedUser)
+      localStorage.setItem('token', receivedToken)
+      localStorage.setItem('user', JSON.stringify(receivedUser))
+      return { success: true, user: receivedUser }
+    } catch (err) {
+      let message = 'Registrasi gagal. Silakan coba lagi.'
+      if (err.response?.data?.errors) {
+        message = Object.values(err.response.data.errors).flat().join(', ')
+      } else if (err.response?.data?.message) {
+        message = err.response.data.message
+      }
+      return { success: false, message }
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const logout = async () => {
     await authService.logout()
     setToken(null)
@@ -66,6 +92,7 @@ export function AuthProvider({ children }) {
         token,
         loading,
         login,
+        register,
         logout,
         isAuthenticated: !!token,
         isAdmin,
@@ -83,4 +110,3 @@ export function useAuth() {
   }
   return context
 }
-

@@ -7,6 +7,7 @@ import ProtectedRoute from './components/layout/ProtectedRoute'
 import Home from './pages/Home'
 import Books from './pages/Books'
 import Login from './pages/Login'
+import Register from './pages/Register'
 import NotFound from './pages/NotFound'
 
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -23,6 +24,7 @@ function App() {
           <Route path="/books" element={<Books />} />
           <Route path="/book" element={<Navigate to="/books" replace />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="*" element={<NotFound />} />
         </Route>
 
