@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from 'react-router-dom'
+import { Navigate, useLocation, Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
 export default function ProtectedRoute({ children, requireAdmin = true }) {
@@ -8,7 +8,7 @@ export default function ProtectedRoute({ children, requireAdmin = true }) {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-paper-white text-stone text-sm">
-        Memeriksa sesi...
+        Memuat...
       </div>
     )
   }
@@ -20,20 +20,19 @@ export default function ProtectedRoute({ children, requireAdmin = true }) {
   if (requireAdmin && !isAdmin) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-paper-white p-6 text-center">
-        <h1 className="text-xl font-semibold text-obsidian mb-2">Akses Ditolak</h1>
+        <h1 className="text-xl font-semibold text-obsidian mb-2">Halaman Tidak Tersedia</h1>
         <p className="text-stone text-sm max-w-md mb-6">
-          Akun Anda tidak memiliki hak akses administrator. Silakan masuk menggunakan akun admin.
+          Anda tidak memiliki izin untuk melihat halaman ini.
         </p>
-        <a
-          href="/login"
+        <Link
+          to="/"
           className="inline-flex items-center px-4 py-2 bg-obsidian text-pure-white text-xs font-medium rounded-md hover:bg-carbon transition-colors"
         >
-          Masuk sebagai Admin
-        </a>
+          Kembali ke Beranda
+        </Link>
       </div>
     )
   }
 
   return children
 }
-

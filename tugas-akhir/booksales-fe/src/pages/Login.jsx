@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { Lock, Mail, ArrowRight, Loader2, Sparkles } from 'lucide-react'
+import { Lock, Mail, ArrowRight, Loader2 } from 'lucide-react'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -18,16 +18,14 @@ export default function Login() {
     setError(null)
     const res = await login(email, password)
     if (res.success) {
-      navigate(from, { replace: true })
+      if (res.user?.role === 'admin') {
+        navigate(from, { replace: true })
+      } else {
+        navigate('/books', { replace: true })
+      }
     } else {
       setError(res.message)
     }
-  }
-
-  const handleQuickFillAdmin = () => {
-    setEmail('admin@gmail.com')
-    setPassword('password123')
-    setError(null)
   }
 
   return (
@@ -39,7 +37,7 @@ export default function Login() {
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-obsidian">Masuk ke BookSales</h1>
           <p className="text-xs text-stone mt-2">
-            Gunakan akun administrator untuk mengelola genre dan penulis.
+            Masukkan email dan password akun Anda untuk melanjutkan.
           </p>
         </div>
 
@@ -97,30 +95,22 @@ export default function Login() {
                 </>
               ) : (
                 <>
-                  <span>Masuk Administrator</span>
+                  <span>Masuk</span>
                   <ArrowRight size={14} />
                 </>
               )}
             </button>
           </form>
 
-          {/* Quick-fill helper for mentor / testing */}
+          {/* Akun clue */}
           <div className="mt-6 pt-5 border-t border-hairline text-center">
-            <button
-              type="button"
-              onClick={handleQuickFillAdmin}
-              className="inline-flex items-center gap-1.5 text-xs text-charcoal hover:text-obsidian px-3 py-1.5 rounded-md bg-paper-white border border-hairline hover:border-smoke transition-colors cursor-pointer"
-            >
-              <Sparkles size={13} className="text-amber-500" />
-              <span>Auto-fill Kredensial Admin Seeder</span>
-            </button>
-            <div className="text-[11px] text-graphite font-mono mt-2">
+            <div className="text-[11px] text-stone font-mono">
               admin@gmail.com / password123
             </div>
           </div>
 
           {/* Link to Register */}
-          <div className="mt-5 pt-4 border-t border-hairline text-center">
+          <div className="mt-4 text-center">
             <p className="text-xs text-stone">
               Belum memiliki akun?{' '}
               <Link to="/register" className="font-medium text-obsidian hover:underline">
