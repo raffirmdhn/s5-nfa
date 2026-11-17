@@ -65,7 +65,11 @@ export default function AdminTransactions() {
       await transactionService.updateTransactionStatus(txId, newStatus)
       showToast('Status pesanan berhasil diperbarui!')
       setTransactions((prev) =>
-        prev.map((item) => (item.id === txId ? { ...item, status: newStatus } : item))
+        prev.map((item) =>
+          item.id === txId || item.order_number === txId
+            ? { ...item, status: newStatus }
+            : item
+        )
       )
     } catch (err) {
       const msg = err.response?.data?.message || 'Gagal memperbarui status pesanan.'
@@ -84,9 +88,9 @@ export default function AdminTransactions() {
     if (!txToDelete) return
     setDeleteLoading(true)
     try {
-      await transactionService.deleteTransaction(txToDelete.id)
+      await transactionService.deleteTransaction(txToDelete.order_number || txToDelete.id)
       setIsDeleteModalOpen(false)
-      showToast(`Transaksi "${txToDelete.order_number || txToDelete.id}" berhasil dihapus dan stok dikembalikan!`)
+      showToast(`Pesanan "${txToDelete.order_number || txToDelete.id}" berhasil dihapus dan stok dikembalikan!`)
       fetchTransactions()
     } catch (err) {
       const msg = err.response?.data?.message || 'Gagal menghapus transaksi.'
@@ -118,11 +122,12 @@ export default function AdminTransactions() {
   }
 
   const filteredTransactions = transactions.filter((t) => {
+    const titles = t.items ? t.items.map((i) => i.title).join(' ') : (t.book?.title || '')
     const matchSearch =
       t.order_number?.toLowerCase().includes(search.toLowerCase()) ||
       t.customer?.name?.toLowerCase().includes(search.toLowerCase()) ||
       t.customer?.email?.toLowerCase().includes(search.toLowerCase()) ||
-      t.book?.title?.toLowerCase().includes(search.toLowerCase())
+      titles.toLowerCase().includes(search.toLowerCase())
 
     const matchStatus =
       selectedStatus === 'all' ||
@@ -253,13 +258,13 @@ export default function AdminTransactions() {
                 </tr>
               ) : (
                 filteredTransactions.map((tx) => (
-                  <tr key={tx.id} className="hover:bg-paper-white/50 transition-colors">
+                  <tr key={tx.id || tx.order_number} className="hover:bg-paper-white/50 transition-colors">
                     <td className="py-3 px-4 font-mono font-bold text-obsidian text-[11px]">
-                      {tx.order_number || `ORD-${tx.id}`}
+                      {tx.order_number || `BS-${tx.id}`}
                     </td>
                     <td className="py-3 px-4">
                       <div className="font-medium text-obsidian">
-                        {tx.customer?.name || 'Pelanggan'}
+                        {tx.recipient_name || tx.customer?.name || 'Pelanggan'}
                       </div>
                       <div className="text-[10px] text-stone font-mono">
                         {tx.customer?.email || '-'}
@@ -267,10 +272,15 @@ export default function AdminTransactions() {
                     </td>
                     <td className="py-3 px-4">
                       <div className="font-medium text-charcoal line-clamp-1">
-                        {tx.book?.title || 'Judul Buku'}
+                        {tx.items?.[0]?.title || tx.book?.title || 'Judul Buku'}
+                        {tx.items && tx.items.length > 1 && (
+                          <span className="text-[10px] text-stone font-normal ml-1">
+                            (+{tx.items.length - 1} lainnya)
+                          </span>
+                        )}
                       </div>
                       <div className="text-[10px] text-stone">
-                        {tx.quantity} eksemplar
+                        {tx.total_items || tx.quantity} eksemplar {tx.items?.length > 1 ? `(${tx.items.length} buku)` : ''}
                       </div>
                     </td>
                     <td className="py-3 px-4 font-mono font-semibold text-obsidian">
@@ -279,8 +289,8 @@ export default function AdminTransactions() {
                     <td className="py-3 px-4">
                       <select
                         value={tx.status || 'pending'}
-                        disabled={updatingId === tx.id}
-                        onChange={(e) => handleStatusChange(tx.id, e.target.value)}
+                        disabled={updatingId === tx.id || updatingId === tx.order_number}
+                        onChange={(e) => handleStatusChange(tx.order_number || tx.id, e.target.value)}
                         className={`text-xs font-mono font-semibold px-2 py-1 rounded border cursor-pointer focus:outline-none transition-colors ${
                           tx.status === 'selesai'
                             ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
@@ -303,7 +313,7 @@ export default function AdminTransactions() {
                     <td className="py-3 px-4 text-right">
                       <div className="flex items-center justify-end gap-1">
                         <Link
-                          to={`/invoice/${tx.id}`}
+                          to={`/invoice/${tx.order_number || tx.id}`}
                           target="_blank"
                           title="Buka Faktur Resmi Fullpage (Tokopedia style)"
                           className="p-1.5 text-stone hover:text-emerald-700 hover:bg-emerald-50 rounded transition-colors"

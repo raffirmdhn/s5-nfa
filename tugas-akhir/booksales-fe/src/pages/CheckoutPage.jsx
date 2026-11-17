@@ -30,7 +30,7 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState('bank_transfer')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
-  const [completedOrders, setCompletedOrders] = useState(null)
+  const [completedOrder, setCompletedOrder] = useState(null)
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('id-ID', {
@@ -68,21 +68,20 @@ export default function CheckoutPage() {
     setError('')
 
     try {
-      const createdList = []
-      // Kirim transaksi ke backend untuk setiap item pada checkoutItems
-      for (const item of checkoutItems) {
-        const payload = {
+      // Kirim satu transaksi gabungan (multi-item payload)
+      const payload = {
+        items: checkoutItems.map((item) => ({
           book_id: item.book.id,
           quantity: item.quantity,
-          recipient_name: formData.recipientName.trim(),
-          phone: formData.phone.trim() || null,
-          shipping_address: formData.address.trim(),
-          notes: formData.notes.trim() || null,
-          payment_method: paymentMethod,
-        }
-        const res = await transactionService.createTransaction(payload)
-        createdList.push(res)
+        })),
+        recipient_name: formData.recipientName.trim(),
+        phone: formData.phone.trim() || null,
+        shipping_address: formData.address.trim(),
+        notes: formData.notes.trim() || null,
+        payment_method: paymentMethod,
       }
+
+      const res = await transactionService.createTransaction(payload)
 
       // HANYA kosongkan keranjang jika checkout berasal dari keranjang belanja.
       // Jika "Beli Sekarang", keranjang belanja tetap aman dan tidak terhapus.
@@ -90,7 +89,7 @@ export default function CheckoutPage() {
         clearCart()
       }
 
-      setCompletedOrders(createdList)
+      setCompletedOrder(res)
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -102,36 +101,82 @@ export default function CheckoutPage() {
   }
 
   // Tampilan ketika pesanan berhasil selesai
-  if (completedOrders) {
+  if (completedOrder) {
+    const orderItems = completedOrder.items && completedOrder.items.length > 0
+      ? completedOrder.items
+      : [
+          {
+            title: completedOrder.book?.title,
+            quantity: completedOrder.quantity,
+            price: completedOrder.book?.price,
+            subtotal: completedOrder.total_amount,
+          },
+        ]
+
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-16 text-center">
         <div className="bg-pure-white border border-hairline rounded-lg p-8 shadow-xs">
-          <CheckCircle2 size={48} className="mx-auto text-terminal-green mb-4" />
+          <CheckCircle2 size={48} className="mx-auto text-[#03AC0E] mb-4" />
           <h1 className="text-xl font-bold tracking-tight text-obsidian mb-2">
             Pesanan Berhasil Dibuat!
           </h1>
           <p className="text-xs text-stone mb-6 max-w-md mx-auto leading-relaxed">
-            Terima kasih telah berbelanja di BookSales. Transaksi Anda telah tercatat ke dalam sistem
+            Terima kasih telah berbelanja di BookSales. Transaksi Anda telah tersimpan dengan aman
             dengan status <strong>Pending</strong>.
           </p>
 
-          <div className="bg-paper-white border border-hairline rounded-md p-4 text-left mb-6 space-y-2">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-stone block">
-              Nomor Pesanan:
-            </span>
-            {completedOrders.map((order, idx) => (
-              <div key={idx} className="flex justify-between items-center text-xs py-1 border-b border-hairline/60 last:border-0">
-                <span className="font-mono font-bold text-obsidian">
-                  {order.order_number || `ORD-${order.id}`}
+          <div className="bg-paper-white border border-hairline rounded-md p-4 text-left mb-6 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-hairline gap-2">
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-stone block">
+                  Nomor Pesanan
                 </span>
-                <span className="text-stone">
-                  {order.book?.title || 'Judul Buku'} ({order.quantity}x)
+                <span className="font-mono text-sm font-bold text-obsidian">
+                  {completedOrder.order_number || `BS-${completedOrder.id}`}
                 </span>
               </div>
-            ))}
+              <div className="text-left sm:text-right">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-stone block">
+                  Nomor Faktur
+                </span>
+                <span className="font-mono text-xs font-semibold text-[#03AC0E]">
+                  {completedOrder.invoice_code || `INV/BS/${completedOrder.id}`}
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-1.5 pt-1">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-stone block">
+                Buku yang Dipesan ({orderItems.length} Judul · {completedOrder.total_items || completedOrder.quantity} Buku):
+              </span>
+              {orderItems.map((item, idx) => (
+                <div key={idx} className="flex justify-between items-center text-xs py-1 border-b border-hairline/60 last:border-0">
+                  <span className="text-obsidian font-medium">
+                    {item.title || 'Judul Buku'} <span className="text-stone">({item.quantity}x)</span>
+                  </span>
+                  <span className="font-mono text-charcoal">
+                    {formatPrice(item.subtotal || item.price * item.quantity)}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-between items-center pt-2 border-t border-hairline text-xs font-semibold">
+              <span className="text-obsidian">Total Pembayaran:</span>
+              <span className="font-mono font-bold text-obsidian text-sm">
+                {formatPrice(completedOrder.total_amount)}
+              </span>
+            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              to={`/invoice/${completedOrder.order_number || completedOrder.id}`}
+              target="_blank"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-medium bg-[#03AC0E] text-pure-white rounded-md hover:bg-[#02910c] transition-colors shadow-xs"
+            >
+              <span>Buka Faktur Resmi</span>
+            </Link>
             <Link
               to="/profile"
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-medium bg-obsidian text-pure-white rounded-md hover:bg-carbon transition-colors shadow-xs"

@@ -4,7 +4,6 @@ import Modal from './Modal'
 import BookCover from './BookCover'
 import transactionService from '../../services/transactionService'
 import {
-  Printer,
   Calendar,
   CheckCircle2,
   Clock,
@@ -107,10 +106,6 @@ export default function TransactionDetailModal({ isOpen, onClose, transactionId,
     }
   }
 
-  const handlePrint = () => {
-    window.print()
-  }
-
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Rincian Faktur & Pesanan">
       {loading ? (
@@ -131,7 +126,7 @@ export default function TransactionDetailModal({ isOpen, onClose, transactionId,
                 Nomor Pesanan
               </span>
               <span className="text-sm font-bold font-mono text-obsidian">
-                {transaction.order_number || `ORD-${transaction.id}`}
+                {transaction.order_number || `BS-${transaction.id}`}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -149,40 +144,62 @@ export default function TransactionDetailModal({ isOpen, onClose, transactionId,
           </div>
 
           {/* Rincian Produk Buku */}
-          <div className="border border-hairline rounded-lg p-4 bg-pure-white shadow-xs">
-            <h3 className="text-[11px] font-mono uppercase tracking-wider text-stone mb-3 flex items-center gap-1.5">
-              <FileText size={13} />
-              <span>Buku Yang Dipesan</span>
+          <div className="border border-hairline rounded-lg p-4 bg-pure-white shadow-xs space-y-3">
+            <h3 className="text-[11px] font-mono uppercase tracking-wider text-stone flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <FileText size={13} />
+                <span>Buku Yang Dipesan ({transaction.items?.length || 1})</span>
+              </span>
+              <span className="font-mono text-stone">
+                Total: {transaction.total_items || transaction.quantity || 1} eksemplar
+              </span>
             </h3>
 
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-16 shrink-0 overflow-hidden rounded border border-hairline">
-                <BookCover
-                  src={transaction.book?.cover_photo}
-                  title={transaction.book?.title}
-                  author={transaction.book?.author?.name}
-                  className="w-full h-full text-[7px]"
-                />
-              </div>
+            <div className="divide-y divide-hairline">
+              {(transaction.items && transaction.items.length > 0
+                ? transaction.items
+                : [
+                    {
+                      id: transaction.id,
+                      title: transaction.book?.title,
+                      author: transaction.book?.author?.name,
+                      cover_photo: transaction.book?.cover_photo,
+                      quantity: transaction.quantity,
+                      price: transaction.book?.price,
+                      subtotal: transaction.total_amount,
+                    },
+                  ]
+              ).map((item, idx) => (
+                <div key={item.id || idx} className="py-3 first:pt-0 last:pb-0 flex items-center gap-3">
+                  <div className="w-12 h-16 shrink-0 overflow-hidden rounded border border-hairline">
+                    <BookCover
+                      src={item.cover_photo || item.book?.cover_photo}
+                      title={item.title || item.book?.title}
+                      author={item.author || item.book?.author?.name}
+                      className="w-full h-full text-[7px]"
+                    />
+                  </div>
 
-              <div className="flex-1 min-w-0">
-                <h4 className="text-xs font-semibold text-obsidian line-clamp-1">
-                  {transaction.book?.title || 'Judul Buku'}
-                </h4>
-                <p className="text-[11px] text-stone">
-                  {transaction.book?.author?.name || 'Penulis Tidak Diketahui'}
-                </p>
-                <div className="text-[11px] text-stone mt-1">
-                  {transaction.quantity} x {formatPrice(transaction.book?.price || 0)}
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-xs font-semibold text-obsidian line-clamp-1">
+                      {item.title || item.book?.title || 'Judul Buku'}
+                    </h4>
+                    <p className="text-[11px] text-stone">
+                      {item.author || item.book?.author?.name || 'Penulis Tidak Diketahui'}
+                    </p>
+                    <div className="text-[11px] text-stone mt-1">
+                      {item.quantity} x {formatPrice(item.price || item.book?.price || 0)}
+                    </div>
+                  </div>
+
+                  <div className="text-right shrink-0">
+                    <span className="text-[10px] text-stone block">Subtotal</span>
+                    <span className="text-xs font-mono font-bold text-obsidian">
+                      {formatPrice(item.subtotal || item.total_amount || 0)}
+                    </span>
+                  </div>
                 </div>
-              </div>
-
-              <div className="text-right shrink-0">
-                <span className="text-[10px] text-stone block">Subtotal</span>
-                <span className="text-xs font-mono font-bold text-obsidian">
-                  {formatPrice(transaction.total_amount)}
-                </span>
-              </div>
+              ))}
             </div>
           </div>
 
@@ -255,24 +272,14 @@ export default function TransactionDetailModal({ isOpen, onClose, transactionId,
 
           {/* Action Buttons */}
           <div className="flex items-center justify-between pt-3 border-t border-hairline flex-wrap gap-2">
-            <div className="flex items-center gap-2">
-              <Link
-                to={`/invoice/${transaction.id}`}
-                target="_blank"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-obsidian bg-paper-white border border-hairline hover:border-smoke rounded-md transition-colors"
-              >
-                <ExternalLink size={13} />
-                <span>Buka Faktur Halaman Penuh</span>
-              </Link>
-              <button
-                type="button"
-                onClick={handlePrint}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-charcoal hover:text-obsidian bg-paper-white border border-hairline hover:border-smoke rounded-md transition-colors cursor-pointer"
-              >
-                <Printer size={13} />
-                <span>Cetak</span>
-              </button>
-            </div>
+            <Link
+              to={`/invoice/${transaction.order_number || transaction.id}`}
+              target="_blank"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-obsidian bg-paper-white border border-hairline hover:border-smoke rounded-md transition-colors"
+            >
+              <ExternalLink size={13} />
+              <span>Buka Faktur Halaman Penuh</span>
+            </Link>
 
             <button
               type="button"

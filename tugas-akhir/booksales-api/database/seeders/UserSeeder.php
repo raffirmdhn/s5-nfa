@@ -27,14 +27,5 @@ class UserSeeder extends Seeder
                 'role' => 'customer',
             ]
         );
-
-        User::updateOrCreate(
-            ['email' => 'user@gmail.com'],
-            [
-                'name' => 'Regular User',
-                'password' => Hash::make('password123'),
-                'role' => 'customer',
-            ]
-        );
     }
 }

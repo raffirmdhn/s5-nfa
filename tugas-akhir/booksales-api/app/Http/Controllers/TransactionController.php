@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\Transaction;
+use App\Support\TransactionGroupPresenter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class TransactionController extends Controller
 {
@@ -32,15 +34,16 @@ class TransactionController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Daftar transaksi berhasil diambil',
-            'data' => $transactions,
+            'data' => TransactionGroupPresenter::groupCollection($transactions),
         ], 200);
     }
 
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'book_id' => 'required|exists:books,id',
-            'quantity' => 'required|integer|min:1',
+            'items' => 'required|array|min:1',
+            'items.*.book_id' => 'required|exists:books,id',
+            'items.*.quantity' => 'required|integer|min:1',
             'recipient_name' => 'nullable|string|max:100',
             'phone' => 'nullable|string|max:30',
             'shipping_address' => 'nullable|string',
@@ -57,54 +60,102 @@ class TransactionController extends Controller
             ], 401);
         }
 
-        $orderNumber = 'ORD-'.strtoupper(uniqid());
+        // Generate nomor order dasar BookSales: BS-YYMMDD-XXXX
+        do {
+            $randomPart = strtoupper(Str::random(4));
+            $baseCode = 'BS-'.date('ymd').'-'.$randomPart;
+        } while (Transaction::where('order_number', 'like', $baseCode.'%')->exists());
 
-        $transaction = DB::transaction(function () use ($validated, $orderNumber, $user) {
-            $book = Book::lockForUpdate()->find($validated['book_id']);
+        $commonData = [
+            'customer_id' => $user->id,
+            'status' => 'pending',
+            'recipient_name' => $validated['recipient_name'] ?? $user->name,
+            'phone' => $validated['phone'] ?? null,
+            'shipping_address' => $validated['shipping_address'] ?? null,
+            'notes' => $validated['notes'] ?? null,
+            'payment_method' => $validated['payment_method'] ?? 'bank_transfer',
+        ];
 
-            if ($book->stock < $validated['quantity']) {
-                return null;
-            }
+        try {
+            $createdIds = DB::transaction(function () use ($validated, $baseCode, $commonData) {
+                $ids = [];
+                $index = 0;
 
-            $totalAmount = $book->price * $validated['quantity'];
+                foreach ($validated['items'] as $item) {
+                    $index++;
+                    $book = Book::lockForUpdate()->find($item['book_id']);
 
-            $book->stock -= $validated['quantity'];
-            $book->save();
+                    if (! $book || $book->stock < $item['quantity']) {
+                        $title = $book ? $book->title : 'Buku #'.$item['book_id'];
+                        throw new \RuntimeException("Stok buku '{$title}' tidak mencukupi (tersisa: ".($book ? $book->stock : 0).').');
+                    }
 
-            return Transaction::create([
-                'order_number' => $orderNumber,
-                'customer_id' => $user->id,
-                'book_id' => $book->id,
-                'quantity' => $validated['quantity'],
-                'total_amount' => $totalAmount,
-                'status' => 'pending',
-                'recipient_name' => $validated['recipient_name'] ?? $user->name,
-                'phone' => $validated['phone'] ?? null,
-                'shipping_address' => $validated['shipping_address'] ?? null,
-                'notes' => $validated['notes'] ?? null,
-                'payment_method' => $validated['payment_method'] ?? 'bank_transfer',
-            ]);
-        });
+                    $book->stock -= $item['quantity'];
+                    $book->save();
 
-        if (! $transaction) {
+                    $itemOrderNumber = $baseCode.'-'.sprintf('%02d', $index);
+                    $totalAmount = $book->price * $item['quantity'];
+
+                    $tx = Transaction::create(array_merge($commonData, [
+                        'order_number' => $itemOrderNumber,
+                        'book_id' => $book->id,
+                        'quantity' => $item['quantity'],
+                        'total_amount' => $totalAmount,
+                    ]));
+
+                    $ids[] = $tx->id;
+                }
+
+                return $ids;
+            });
+        } catch (\RuntimeException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Stok buku tidak mencukupi',
+                'message' => $e->getMessage(),
             ], 400);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memproses transaksi: '.$e->getMessage(),
+            ], 500);
         }
+
+        $createdRows = Transaction::with(['customer', 'book.author', 'book.genre'])
+            ->whereIn('id', $createdIds)
+            ->get();
 
         return response()->json([
             'success' => true,
             'message' => 'Transaksi berhasil dibuat',
-            'data' => $transaction->load(['customer', 'book.author', 'book.genre']),
+            'data' => TransactionGroupPresenter::presentOrder($baseCode, $createdRows),
         ], 201);
     }
 
     public function show(string $id): JsonResponse
     {
-        $transaction = Transaction::with(['customer', 'book.author', 'book.genre'])->find($id);
+        $baseCode = null;
 
-        if (! $transaction) {
+        if (is_numeric($id)) {
+            $single = Transaction::find($id);
+            if (! $single) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Transaksi tidak ditemukan',
+                ], 404);
+            }
+            $baseCode = TransactionGroupPresenter::extractBaseCode($single->order_number);
+        } else {
+            $baseCode = TransactionGroupPresenter::extractBaseCode($id);
+        }
+
+        $rows = Transaction::with(['customer', 'book.author', 'book.genre'])
+            ->where(function ($q) use ($baseCode) {
+                $q->where('order_number', $baseCode)
+                    ->orWhere('order_number', 'like', $baseCode.'-%');
+            })
+            ->get();
+
+        if ($rows->isEmpty()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Transaksi tidak ditemukan',
@@ -112,7 +163,7 @@ class TransactionController extends Controller
         }
 
         $user = auth('api')->user();
-        if ($user->role !== 'admin' && (int) $transaction->customer_id !== (int) $user->id) {
+        if ($user && $user->role !== 'admin' && (int) $rows->first()->customer_id !== (int) $user->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized: Bukan transaksi milik Anda',
@@ -122,120 +173,124 @@ class TransactionController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Detail transaksi berhasil diambil',
-            'data' => $transaction,
+            'data' => TransactionGroupPresenter::presentOrder($baseCode, $rows),
         ], 200);
     }
 
     public function update(Request $request, string $id): JsonResponse
     {
-        $transaction = Transaction::find($id);
+        $user = auth('api')->user();
 
-        if (! $transaction) {
+        if (! $user || $user->role !== 'admin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized: Hanya admin yang dapat mengubah status pesanan',
+            ], 403);
+        }
+
+        $validated = $request->validate([
+            'status' => 'required|string|in:pending,diproses,dikirim,selesai',
+        ]);
+
+        $baseCode = null;
+
+        if (is_numeric($id)) {
+            $single = Transaction::find($id);
+            if (! $single) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Transaksi tidak ditemukan',
+                ], 404);
+            }
+            $baseCode = TransactionGroupPresenter::extractBaseCode($single->order_number);
+        } else {
+            $baseCode = TransactionGroupPresenter::extractBaseCode($id);
+        }
+
+        $rows = Transaction::where(function ($q) use ($baseCode) {
+            $q->where('order_number', $baseCode)
+                ->orWhere('order_number', 'like', $baseCode.'-%');
+        })->get();
+
+        if ($rows->isEmpty()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Transaksi tidak ditemukan',
             ], 404);
         }
 
+        Transaction::whereIn('id', $rows->pluck('id'))->update(['status' => $validated['status']]);
+
+        $updatedRows = Transaction::with(['customer', 'book.author', 'book.genre'])
+            ->whereIn('id', $rows->pluck('id'))
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status transaksi berhasil diperbarui',
+            'data' => TransactionGroupPresenter::presentOrder($baseCode, $updatedRows),
+        ], 200);
+    }
+
+    public function destroy(string $id): JsonResponse
+    {
         $user = auth('api')->user();
-        if ($user->role !== 'admin' && (int) $transaction->customer_id !== (int) $user->id) {
+
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        $baseCode = null;
+
+        if (is_numeric($id)) {
+            $single = Transaction::find($id);
+            if (! $single) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Transaksi tidak ditemukan',
+                ], 404);
+            }
+            $baseCode = TransactionGroupPresenter::extractBaseCode($single->order_number);
+        } else {
+            $baseCode = TransactionGroupPresenter::extractBaseCode($id);
+        }
+
+        $rows = Transaction::where(function ($q) use ($baseCode) {
+            $q->where('order_number', $baseCode)
+                ->orWhere('order_number', 'like', $baseCode.'-%');
+        })->get();
+
+        if ($rows->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaksi tidak ditemukan',
+            ], 404);
+        }
+
+        if ($user->role !== 'admin' && (int) $rows->first()->customer_id !== (int) $user->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized: Bukan transaksi milik Anda',
             ], 403);
         }
 
-        $validated = $request->validate([
-            'status' => 'sometimes|required|string|in:pending,diproses,dikirim,selesai',
-            'book_id' => 'sometimes|required|exists:books,id',
-            'quantity' => 'sometimes|required|integer|min:1',
-        ]);
-
-        if (isset($validated['status']) && ! isset($validated['book_id']) && ! isset($validated['quantity'])) {
-            if ($user->role !== 'admin') {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthorized: Hanya admin yang dapat mengubah status pesanan',
-                ], 403);
+        DB::transaction(function () use ($rows) {
+            foreach ($rows as $row) {
+                $book = Book::lockForUpdate()->find($row->book_id);
+                if ($book) {
+                    $book->stock += $row->quantity;
+                    $book->save();
+                }
+                $row->delete();
             }
-
-            $transaction->update(['status' => $validated['status']]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Status transaksi berhasil diperbarui',
-                'data' => $transaction->load(['customer', 'book.author', 'book.genre']),
-            ], 200);
-        }
-
-        $updated = DB::transaction(function () use ($transaction, $validated) {
-            $oldBook = Book::lockForUpdate()->find($transaction->book_id);
-            $newBookId = (int) ($validated['book_id'] ?? $transaction->book_id);
-            $newQuantity = (int) ($validated['quantity'] ?? $transaction->quantity);
-
-            $isSameBook = $oldBook->id === $newBookId;
-            $newBook = $isSameBook ? $oldBook : Book::lockForUpdate()->find($newBookId);
-
-            $availableStock = $newBook->stock + ($isSameBook ? $transaction->quantity : 0);
-
-            if ($availableStock < $newQuantity) {
-                return null;
-            }
-
-            $oldBook->stock += $transaction->quantity;
-            $oldBook->save();
-
-            $newBook->stock -= $newQuantity;
-            $newBook->save();
-
-            $transaction->update([
-                'book_id' => $newBook->id,
-                'quantity' => $newQuantity,
-                'total_amount' => $newBook->price * $newQuantity,
-            ]);
-
-            return $transaction;
-        });
-
-        if (! $updated) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Stok buku tidak mencukupi',
-            ], 400);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Transaksi berhasil diperbarui',
-            'data' => $updated->load(['customer', 'book']),
-        ], 200);
-    }
-
-    public function destroy(string $id): JsonResponse
-    {
-        $transaction = Transaction::find($id);
-
-        if (! $transaction) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Transaksi tidak ditemukan',
-            ], 404);
-        }
-
-        DB::transaction(function () use ($transaction) {
-            $book = Book::lockForUpdate()->find($transaction->book_id);
-            if ($book) {
-                $book->stock += $transaction->quantity;
-                $book->save();
-            }
-
-            $transaction->delete();
         });
 
         return response()->json([
             'success' => true,
-            'message' => 'Transaksi berhasil dihapus',
+            'message' => 'Seluruh data transaksi dalam pesanan berhasil dihapus dan stok dikembalikan',
         ], 200);
     }
 }
-

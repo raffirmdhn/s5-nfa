@@ -31,6 +31,20 @@ export default function InvoicePage() {
     loadTransaction()
   }, [id])
 
+  // Update document.title agar ketika pengguna mencetak / menyimpan PDF,
+  // browser otomatis menggunakan nama file sesuai kode invoice resmi
+  useEffect(() => {
+    if (transaction) {
+      const prevTitle = document.title
+      const invoiceNumber = (transaction.invoice_code || getInvoiceCode(transaction)).replace(/\//g, '-')
+      document.title = `Invoice-${invoiceNumber}`
+
+      return () => {
+        document.title = prevTitle
+      }
+    }
+  }, [transaction])
+
   const formatPrice = (price) => {
     const formatted = new Intl.NumberFormat('id-ID', {
       minimumFractionDigits: 2,
@@ -51,11 +65,12 @@ export default function InvoicePage() {
 
   const getInvoiceCode = (tx) => {
     if (!tx) return '-'
+    if (tx.invoice_code) return tx.invoice_code
     const d = tx.created_at ? new Date(tx.created_at) : new Date()
     const yyyy = d.getFullYear()
     const mm = String(d.getMonth() + 1).padStart(2, '0')
     const dd = String(d.getDate()).padStart(2, '0')
-    const cleanNumber = (tx.order_number || `ORD${tx.id}`).replace(/[^a-zA-Z0-9]/g, '')
+    const cleanNumber = (tx.order_number || `BS${tx.id}`).replace(/[^a-zA-Z0-9]/g, '')
     return `INV/${yyyy}${mm}${dd}/BS/${cleanNumber}`
   }
 
@@ -130,13 +145,21 @@ export default function InvoicePage() {
     )
   }
 
+  const handlePrint = () => {
+    if (transaction) {
+      const invoiceNumber = (transaction.invoice_code || getInvoiceCode(transaction)).replace(/\//g, '-')
+      document.title = `Invoice-${invoiceNumber}`
+    }
+    window.print()
+  }
+
   return (
     <div className="min-h-screen bg-[#F3F4F6] py-6 sm:py-10 px-4 print:bg-white print:p-0 print:m-0">
       {/* Floating Action Bar (Hidden when printing) */}
       <div className="max-w-3xl mx-auto mb-6 flex items-center justify-end print:hidden">
         <button
           type="button"
-          onClick={() => window.print()}
+          onClick={handlePrint}
           className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium text-pure-white bg-obsidian hover:bg-carbon rounded-md transition-colors cursor-pointer shadow-xs"
         >
           <Printer size={14} />
@@ -159,7 +182,7 @@ export default function InvoicePage() {
               </span>
             </div>
             <span className="text-[11px] font-mono text-stone uppercase tracking-widest">
-              {transaction.order_number || `ORD-${transaction.id}`}
+              {transaction.order_number || `BS-${transaction.id}`}
             </span>
           </div>
 
@@ -233,24 +256,39 @@ export default function InvoicePage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-hairline">
-                  <tr>
-                    <td className="py-3.5 px-4">
-                      <div className="font-semibold text-obsidian text-xs">
-                        {transaction.book?.title || 'Judul Buku'}
-                      </div>
-                      <div className="text-[11px] text-stone mt-0.5">
-                        Penulis: {transaction.book?.author?.name || 'Penulis Tidak Diketahui'} · {transaction.quantity} x {formatPrice(transaction.book?.price || 0)}
-                      </div>
-                      {transaction.notes && (
-                        <div className="text-[10px] text-stone mt-1 italic">
-                          Catatan: {transaction.notes}
+                  {(transaction.items && transaction.items.length > 0
+                    ? transaction.items
+                    : [
+                        {
+                          id: transaction.id,
+                          title: transaction.book?.title,
+                          author: transaction.book?.author?.name,
+                          quantity: transaction.quantity,
+                          price: transaction.book?.price,
+                          subtotal: transaction.total_amount,
+                          notes: transaction.notes,
+                        },
+                      ]
+                  ).map((item, idx) => (
+                    <tr key={item.id || idx}>
+                      <td className="py-3.5 px-4">
+                        <div className="font-semibold text-obsidian text-xs">
+                          {item.title || 'Judul Buku'}
                         </div>
-                      )}
-                    </td>
-                    <td className="py-3.5 px-4 text-right font-mono font-medium text-obsidian whitespace-nowrap">
-                      {formatPrice(transaction.total_amount)}
-                    </td>
-                  </tr>
+                        <div className="text-[11px] text-stone mt-0.5">
+                          Penulis: {item.author || 'Penulis Tidak Diketahui'} · {item.quantity} x {formatPrice(item.price || 0)}
+                        </div>
+                        {item.notes && (
+                          <div className="text-[10px] text-stone mt-1 italic">
+                            Catatan: {item.notes}
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-4 text-right font-mono font-medium text-obsidian whitespace-nowrap">
+                        {formatPrice(item.subtotal || ((item.price || 0) * (item.quantity || 1)))}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

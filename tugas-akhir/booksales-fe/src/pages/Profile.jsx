@@ -235,65 +235,75 @@ export default function Profile() {
           </div>
         ) : (
           <div className="divide-y divide-hairline">
-            {transactions.map((t) => (
-              <div key={t.id} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-16 shrink-0 overflow-hidden rounded border border-hairline">
-                    <BookCover
-                      src={t.book?.cover_photo}
-                      title={t.book?.title}
-                      author={t.book?.author?.name}
-                      className="w-full h-full"
-                    />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className="font-mono text-xs font-bold text-obsidian">
-                        {t.order_number || `ORD-${t.id}`}
-                      </span>
-                      {getStatusBadge(t.status)}
-                    </div>
-                    <h3 className="text-xs font-semibold text-charcoal line-clamp-1">
-                      {t.book?.title || 'Buku Tidak Diketahui'}
-                    </h3>
-                    <p className="text-[11px] text-stone mt-0.5">
-                      Jumlah: <strong className="text-charcoal">{t.quantity}</strong> eksemplar · {formatDate(t.created_at)}
-                    </p>
-                  </div>
-                </div>
+            {transactions.map((t) => {
+              const primaryItem = t.items?.[0] || t
+              const hasMultiple = t.items && t.items.length > 1
 
-                <div className="text-left sm:text-right shrink-0 flex flex-col items-start sm:items-end justify-between gap-2">
-                  <div>
-                    <span className="text-[10px] text-stone block">Total Pembayaran</span>
-                    <span className="text-sm font-bold font-mono text-obsidian">
-                      {formatPrice(t.total_amount)}
-                    </span>
+              return (
+                <div key={t.id || t.order_number} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-16 shrink-0 overflow-hidden rounded border border-hairline">
+                      <BookCover
+                        src={primaryItem.cover_photo || t.book?.cover_photo}
+                        title={primaryItem.title || t.book?.title}
+                        author={primaryItem.author || t.book?.author?.name}
+                        className="w-full h-full text-[7px]"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <span className="font-mono text-xs font-bold text-obsidian">
+                          {t.order_number || `BS-${t.id}`}
+                        </span>
+                        {getStatusBadge(t.status)}
+                      </div>
+                      <h3 className="text-xs font-semibold text-charcoal line-clamp-1">
+                        {primaryItem.title || t.book?.title || 'Buku Tidak Diketahui'}
+                        {hasMultiple && (
+                          <span className="text-[11px] font-normal text-stone font-sans ml-1">
+                            (+{t.items.length - 1} buku lainnya)
+                          </span>
+                        )}
+                      </h3>
+                      <p className="text-[11px] text-stone mt-0.5">
+                        Jumlah: <strong className="text-charcoal">{t.total_items || t.quantity}</strong> eksemplar · {formatDate(t.created_at)}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <Link
-                      to={`/invoice/${t.id}`}
-                      target="_blank"
-                      className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 rounded transition-colors"
-                      title="Buka Faktur Resmi Fullpage"
-                    >
-                      <FileText size={12} />
-                      <span>Faktur</span>
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedTx(t)
-                        setIsDetailOpen(true)
-                      }}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-charcoal hover:text-obsidian bg-paper-white border border-hairline hover:border-smoke rounded transition-colors cursor-pointer"
-                    >
-                      <Eye size={12} />
-                      <span>Rincian</span>
-                    </button>
+
+                  <div className="text-left sm:text-right shrink-0 flex flex-col items-start sm:items-end justify-between gap-2">
+                    <div>
+                      <span className="text-[10px] text-stone block">Total Pembayaran</span>
+                      <span className="text-sm font-bold font-mono text-obsidian">
+                        {formatPrice(t.total_amount)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Link
+                        to={`/invoice/${t.order_number || t.id}`}
+                        target="_blank"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 rounded transition-colors"
+                        title="Buka Faktur Resmi Fullpage"
+                      >
+                        <FileText size={12} />
+                        <span>Faktur</span>
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedTx(t)
+                          setIsDetailOpen(true)
+                        }}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-charcoal hover:text-obsidian bg-paper-white border border-hairline hover:border-smoke rounded transition-colors cursor-pointer"
+                      >
+                        <Eye size={12} />
+                        <span>Rincian</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
