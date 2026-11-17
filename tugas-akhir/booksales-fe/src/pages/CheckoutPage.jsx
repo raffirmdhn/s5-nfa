@@ -1,15 +1,23 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
 import transactionService from '../services/transactionService'
 import BookCover from '../components/common/BookCover'
-import { CheckCircle2, AlertCircle, ArrowLeft, Loader2, CreditCard, QrCode, Truck } from 'lucide-react'
+import { CheckCircle2, AlertCircle, ArrowLeft, Loader2, CreditCard, QrCode, Truck, Zap } from 'lucide-react'
 
 export default function CheckoutPage() {
   const { user } = useAuth()
-  const { cart, getCartTotal, getCartCount, clearCart } = useCart()
+  const { cart, clearCart } = useCart()
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // Periksa apakah ini alur "Beli Sekarang" (hanya satu buku) atau checkout dari keranjang
+  const directItem = location.state?.directItem || null
+  const isDirectBuy = Boolean(directItem && directItem.book)
+
+  // Tentukan item yang diproses pada checkout saat ini
+  const checkoutItems = isDirectBuy ? [directItem] : cart
 
   const [formData, setFormData] = useState({
     recipientName: user?.name || '',
@@ -32,8 +40,11 @@ export default function CheckoutPage() {
     }).format(price || 0)
   }
 
-  const subtotal = getCartTotal()
-  const totalCount = getCartCount()
+  const totalCount = checkoutItems.reduce((acc, it) => acc + (it.quantity || 0), 0)
+  const subtotal = checkoutItems.reduce(
+    (acc, it) => acc + (Number(it.book.price) || 0) * (it.quantity || 0),
+    0
+  )
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -42,7 +53,7 @@ export default function CheckoutPage() {
 
   const handleSubmitOrder = async (e) => {
     e.preventDefault()
-    if (cart.length === 0) return
+    if (checkoutItems.length === 0) return
 
     if (!formData.recipientName.trim()) {
       setError('Nama penerima wajib diisi.')
@@ -58,8 +69,8 @@ export default function CheckoutPage() {
 
     try {
       const createdList = []
-      // Kirim transaksi ke backend untuk setiap item buku di keranjang
-      for (const item of cart) {
+      // Kirim transaksi ke backend untuk setiap item pada checkoutItems
+      for (const item of checkoutItems) {
         const payload = {
           book_id: item.book.id,
           quantity: item.quantity,
@@ -68,7 +79,12 @@ export default function CheckoutPage() {
         createdList.push(res)
       }
 
-      clearCart()
+      // HANYA kosongkan keranjang jika checkout berasal dari keranjang belanja.
+      // Jika "Beli Sekarang", keranjang belanja tetap aman dan tidak terhapus.
+      if (!isDirectBuy) {
+        clearCart()
+      }
+
       setCompletedOrders(createdList)
     } catch (err) {
       setError(
@@ -80,7 +96,7 @@ export default function CheckoutPage() {
     }
   }
 
-  // Jika pesanan telah berhasil diproses
+  // Tampilan ketika pesanan berhasil selesai
   if (completedOrders) {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-16 text-center">
@@ -129,15 +145,16 @@ export default function CheckoutPage() {
     )
   }
 
-  if (cart.length === 0) {
+  // Jika tidak ada item yang di-checkout
+  if (checkoutItems.length === 0) {
     return (
       <div className="max-w-md mx-auto px-4 py-16 text-center">
         <div className="bg-pure-white border border-hairline rounded-lg p-6 shadow-xs">
-          <p className="text-xs text-stone mb-4">Keranjang belanja Anda kosong.</p>
+          <p className="text-xs text-stone mb-4">Tidak ada buku yang dipilih untuk di-checkout.</p>
           <button
             type="button"
             onClick={() => navigate('/books')}
-            className="px-4 py-2 text-xs bg-obsidian text-pure-white rounded-md hover:bg-carbon transition-colors"
+            className="px-4 py-2 text-xs bg-obsidian text-pure-white rounded-md hover:bg-carbon transition-colors cursor-pointer"
           >
             Kembali ke Katalog
           </button>
@@ -149,18 +166,27 @@ export default function CheckoutPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
       <Link
-        to="/cart"
+        to={isDirectBuy && directItem?.book?.id ? `/books/${directItem.book.id}` : '/cart'}
         className="inline-flex items-center gap-1.5 text-xs font-medium text-stone hover:text-obsidian transition-colors mb-6"
       >
         <ArrowLeft size={14} />
-        <span>Kembali ke Keranjang</span>
+        <span>{isDirectBuy ? 'Batal & Kembali ke Detail Buku' : 'Kembali ke Keranjang'}</span>
       </Link>
 
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight text-obsidian">Checkout Pesanan</h1>
-        <p className="text-xs text-stone mt-1">
-          Lengkapi data pengiriman dan pilih metode pembayaran untuk menyelesaikan transaksi.
-        </p>
+      <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-obsidian">Checkout Pesanan</h1>
+          <p className="text-xs text-stone mt-1">
+            Lengkapi data pengiriman dan pilih metode pembayaran untuk menyelesaikan transaksi.
+          </p>
+        </div>
+
+        {isDirectBuy && (
+          <span className="self-start sm:self-auto inline-flex items-center gap-1.5 text-xs font-mono font-medium text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
+            <Zap size={13} className="text-amber-600" />
+            <span>Beli Langsung (1 Judul)</span>
+          </span>
+        )}
       </div>
 
       {error && (
@@ -313,17 +339,22 @@ export default function CheckoutPage() {
           {/* Right: Ringkasan Pesanan */}
           <div className="lg:col-span-1">
             <div className="bg-pure-white border border-hairline rounded-lg p-5 shadow-xs sticky top-20">
-              <h2 className="text-sm font-semibold text-obsidian mb-4">Ringkasan Pesanan</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-semibold text-obsidian">Ringkasan Pesanan</h2>
+                <span className="text-[10px] font-mono text-stone bg-paper-white px-2 py-0.5 rounded border border-hairline">
+                  {totalCount} item
+                </span>
+              </div>
 
               <div className="divide-y divide-hairline max-h-60 overflow-y-auto pr-1 mb-4">
-                {cart.map((item) => (
+                {checkoutItems.map((item) => (
                   <div key={item.book.id} className="py-2.5 flex items-center gap-3">
                     <div className="w-10 h-14 shrink-0 overflow-hidden rounded border border-hairline">
                       <BookCover
                         src={item.book.cover_photo}
                         title={item.book.title}
                         author={item.book.author?.name}
-                        className="w-full h-full"
+                        className="w-full h-full text-[7px]"
                       />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -374,7 +405,9 @@ export default function CheckoutPage() {
               </button>
 
               <p className="text-[10px] text-stone text-center mt-3">
-                Dengan mengonfirmasi pesanan, transaksi Anda akan disimpan dan status dapat dipantau di halaman Profil.
+                {isDirectBuy
+                  ? 'Item di keranjang belanja Anda akan tetap tersimpan aman.'
+                  : 'Setelah pembayaran terkonfirmasi, keranjang belanja akan dikosongkan.'}
               </p>
             </div>
           </div>

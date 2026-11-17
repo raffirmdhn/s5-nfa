@@ -69,12 +69,19 @@ export default function BookDetail() {
 
   const handleBuyNow = () => {
     if (!book) return
-    const result = addToCart(book, quantity)
-    if (result.success) {
-      navigate('/checkout')
-    } else {
-      setFeedback({ type: 'error', message: result.message })
+    if (Number(book.stock || 0) <= 0) {
+      setFeedback({ type: 'error', message: 'Stok buku ini sedang habis.' })
+      return
     }
+    // Langsung arahkan ke checkout hanya untuk buku ini (tanpa menyentuh keranjang belanja)
+    navigate('/checkout', {
+      state: {
+        directItem: {
+          book,
+          quantity,
+        },
+      },
+    })
   }
 
   if (loading) {

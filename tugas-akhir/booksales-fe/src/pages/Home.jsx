@@ -34,10 +34,6 @@ export default function Home() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       {/* Hero Section */}
       <section className="text-center py-12 sm:py-20 border-b border-hairline">
-        <div className="inline-block px-3 py-1 rounded-full bg-paper-white border border-hairline text-stone text-xs font-mono mb-6">
-          Praktikum ReactJS Lanjutan · STT Terpadu Nurul Fikri
-        </div>
-
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-obsidian max-w-4xl mx-auto leading-tight">
           Katalog Buku BookSales
         </h1>
