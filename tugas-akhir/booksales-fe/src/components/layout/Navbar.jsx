@@ -1,10 +1,13 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { ShieldCheck, LogIn, UserPlus, LogOut, User } from 'lucide-react'
+import { useCart } from '../../context/CartContext'
+import { ShieldCheck, LogIn, UserPlus, LogOut, User, ShoppingCart } from 'lucide-react'
 
 export default function Navbar() {
   const { user, isAuthenticated, isAdmin, logout } = useAuth()
+  const { getCartCount } = useCart()
   const location = useLocation()
+  const cartCount = getCartCount()
 
   const isActive = (path) => location.pathname === path
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
@@ -38,6 +41,23 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
+          <Link
+            to="/cart"
+            className={`relative p-2 rounded-md transition-colors ${
+              isActive('/cart')
+                ? 'bg-hairline/70 text-obsidian'
+                : 'text-stone hover:text-obsidian hover:bg-hairline/40'
+            }`}
+            title="Keranjang Belanja"
+          >
+            <ShoppingCart size={17} />
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-obsidian text-pure-white text-[10px] font-mono font-bold rounded-full flex items-center justify-center leading-none">
+                {cartCount > 99 ? '99+' : cartCount}
+              </span>
+            )}
+          </Link>
+
           {isAuthenticated && isAdmin && (
             <Link
               to="/admin/dashboard"

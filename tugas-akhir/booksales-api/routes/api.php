@@ -23,15 +23,15 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // Create, Update, dan Show transaksi untuk customer terautentikasi
-    Route::apiResource('/transactions', TransactionController::class)->only(['store', 'show', 'update']);
+    // Transaksi untuk user terautentikasi (Customer melihat miliknya, Admin melihat semua)
+    Route::apiResource('/transactions', TransactionController::class)->only(['index', 'store', 'show', 'update']);
 
     Route::middleware(['role:admin'])->group(function () {
         Route::apiResource('/books', BookController::class)->only(['store', 'update', 'destroy']);
         Route::apiResource('/authors', AuthorController::class)->only(['store', 'update', 'destroy']);
         Route::apiResource('/genres', GenreController::class)->only(['store', 'update', 'destroy']);
 
-        // Read All dan Destroy transaksi hanya untuk admin
-        Route::apiResource('/transactions', TransactionController::class)->only(['index', 'destroy']);
+        // Destroy transaksi hanya untuk admin
+        Route::apiResource('/transactions', TransactionController::class)->only(['destroy']);
     });
 });

@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { Bookmark, Users, LayoutDashboard, ExternalLink, LogOut } from 'lucide-react'
+import { Bookmark, Users, LayoutDashboard, ExternalLink, LogOut, BookOpen, ShoppingBag } from 'lucide-react'
 
 export default function AdminNavbar() {
   const { user, logout } = useAuth()
@@ -8,6 +8,8 @@ export default function AdminNavbar() {
 
   const navItems = [
     { label: 'Overview', path: '/admin/dashboard', icon: LayoutDashboard },
+    { label: 'Buku', path: '/admin/books', icon: BookOpen },
+    { label: 'Transaksi', path: '/admin/transactions', icon: ShoppingBag },
     { label: 'Genre', path: '/admin/genres', icon: Bookmark },
     { label: 'Penulis', path: '/admin/authors', icon: Users },
   ]

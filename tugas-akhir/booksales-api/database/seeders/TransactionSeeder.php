@@ -22,6 +22,7 @@ class TransactionSeeder extends Seeder
                     'book_id' => $book->id,
                     'quantity' => 1,
                     'total_amount' => $book->price,
+                    'status' => 'diproses',
                 ]
             );
         }

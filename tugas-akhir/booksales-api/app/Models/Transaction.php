@@ -13,6 +13,7 @@ class Transaction extends Model
         'book_id',
         'quantity',
         'total_amount',
+        'status',
     ];
 
     protected function casts(): array

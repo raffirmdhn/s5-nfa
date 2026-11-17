@@ -12,7 +12,22 @@ class TransactionController extends Controller
 {
     public function index(): JsonResponse
     {
-        $transactions = Transaction::with(['customer', 'book'])->get();
+        $user = auth('api')->user();
+
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        $query = Transaction::with(['customer', 'book'])->latest();
+
+        if ($user->role !== 'admin') {
+            $query->where('customer_id', $user->id);
+        }
+
+        $transactions = $query->get();
 
         return response()->json([
             'success' => true,
@@ -57,6 +72,7 @@ class TransactionController extends Controller
                 'book_id' => $book->id,
                 'quantity' => $validated['quantity'],
                 'total_amount' => $totalAmount,
+                'status' => 'pending',
             ]);
         });
 
@@ -120,9 +136,27 @@ class TransactionController extends Controller
         }
 
         $validated = $request->validate([
+            'status' => 'sometimes|required|string|in:pending,diproses,dikirim,selesai',
             'book_id' => 'sometimes|required|exists:books,id',
             'quantity' => 'sometimes|required|integer|min:1',
         ]);
+
+        if (isset($validated['status']) && ! isset($validated['book_id']) && ! isset($validated['quantity'])) {
+            if ($user->role !== 'admin') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized: Hanya admin yang dapat mengubah status pesanan',
+                ], 403);
+            }
+
+            $transaction->update(['status' => $validated['status']]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Status transaksi berhasil diperbarui',
+                'data' => $transaction->load(['customer', 'book']),
+            ], 200);
+        }
 
         $updated = DB::transaction(function () use ($transaction, $validated) {
             $oldBook = Book::lockForUpdate()->find($transaction->book_id);

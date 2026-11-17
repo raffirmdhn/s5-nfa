@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import bookService from '../services/bookService'
 import genreService from '../services/genreService'
 import BookCover from '../components/common/BookCover'
@@ -106,15 +107,16 @@ export default function Books() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredBooks.map((book) => (
-            <div
+            <Link
               key={book.id}
-              className="bg-pure-white border border-hairline rounded-md overflow-hidden hover:border-smoke hover:shadow-md transition-all flex flex-col"
+              to={`/books/${book.id}`}
+              className="group bg-pure-white border border-hairline rounded-md overflow-hidden hover:border-smoke hover:shadow-md transition-all flex flex-col"
             >
               <BookCover
                 src={book.cover_photo}
                 title={book.title}
                 author={book.author?.name}
-                className="h-52"
+                className="h-52 group-hover:scale-[1.02] transition-transform duration-200"
               />
               <div className="p-4 flex-1 flex flex-col justify-between">
                 <div>
@@ -123,7 +125,9 @@ export default function Books() {
                       {book.genre.name}
                     </span>
                   )}
-                  <h3 className="text-sm font-semibold text-obsidian line-clamp-1">{book.title}</h3>
+                  <h3 className="text-sm font-semibold text-obsidian line-clamp-1 group-hover:text-charcoal transition-colors">
+                    {book.title}
+                  </h3>
                   <p className="text-xs text-charcoal mt-0.5">
                     {book.author?.name || 'Penulis Tidak Diketahui'}
                   </p>
@@ -142,7 +146,7 @@ export default function Books() {
                   </span>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}
