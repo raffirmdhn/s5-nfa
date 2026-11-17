@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Lock, Mail, ArrowRight, Loader2 } from 'lucide-react'
 
@@ -9,17 +9,19 @@ export default function Login() {
   const [error, setError] = useState(null)
   const { login, loading } = useAuth()
   const navigate = useNavigate()
-  const location = useLocation()
+  const [searchParams] = useSearchParams()
 
-  const from = location.state?.from?.pathname || '/admin/genres'
+  const redirectTo = searchParams.get('redirectto')
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
     const res = await login(email, password)
     if (res.success) {
-      if (res.user?.role === 'admin') {
-        navigate(from, { replace: true })
+      if (redirectTo) {
+        navigate(redirectTo, { replace: true })
+      } else if (res.user?.role === 'admin') {
+        navigate('/admin/genres', { replace: true })
       } else {
         navigate('/books', { replace: true })
       }
@@ -106,7 +108,10 @@ export default function Login() {
           <div className="mt-4 text-center">
             <p className="text-xs text-stone">
               Belum memiliki akun?{' '}
-              <Link to="/register" className="font-medium text-obsidian hover:underline">
+              <Link
+                to={redirectTo ? `/register?redirectto=${encodeURIComponent(redirectTo)}` : '/register'}
+                className="font-medium text-obsidian hover:underline"
+              >
                 Daftar sekarang
               </Link>
             </p>

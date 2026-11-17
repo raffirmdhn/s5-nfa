@@ -14,7 +14,7 @@ export default function ProtectedRoute({ children, allowedRoles = null, requireA
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />
+    return <Navigate to={`/login?redirectto=${encodeURIComponent(location.pathname)}`} replace />
   }
 
   // Check role authorization

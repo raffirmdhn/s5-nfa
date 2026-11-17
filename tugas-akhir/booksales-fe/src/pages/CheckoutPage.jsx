@@ -13,7 +13,22 @@ export default function CheckoutPage() {
   const location = useLocation()
 
   // Periksa apakah ini alur "Beli Sekarang" (hanya satu buku) atau checkout dari keranjang
-  const directItem = location.state?.directItem || null
+  const [directItem] = useState(() => {
+    if (location.state?.directItem && location.state.directItem.book) {
+      return location.state.directItem
+    }
+    try {
+      const saved = sessionStorage.getItem('booksales_direct_buy')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (parsed && parsed.book) return parsed
+      }
+    } catch {
+      return null
+    }
+    return null
+  })
+
   const isDirectBuy = Boolean(directItem && directItem.book)
 
   // Tentukan item yang diproses pada checkout saat ini
@@ -84,9 +99,11 @@ export default function CheckoutPage() {
       const res = await transactionService.createTransaction(payload)
 
       // HANYA kosongkan keranjang jika checkout berasal dari keranjang belanja.
-      // Jika "Beli Sekarang", keranjang belanja tetap aman dan tidak terhapus.
+      // Jika "Beli Sekarang", keranjang belanja tetap aman dan bersihkan sessionStorage.
       if (!isDirectBuy) {
         clearCart()
+      } else {
+        sessionStorage.removeItem('booksales_direct_buy')
       }
 
       setCompletedOrder(res)

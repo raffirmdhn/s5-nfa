@@ -1,8 +1,9 @@
-import { Navigate } from 'react-router-dom'
+import { Navigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
 export default function GuestRoute({ children }) {
   const { isAuthenticated, isAdmin, loading } = useAuth()
+  const [searchParams] = useSearchParams()
 
   if (loading) {
     return (
@@ -13,10 +14,13 @@ export default function GuestRoute({ children }) {
   }
 
   if (isAuthenticated) {
-    // If already logged in, redirect away from guest-only pages
-    return <Navigate to={isAdmin ? '/admin/dashboard' : '/profile'} replace />
+    const redirectTo = searchParams.get('redirectto')
+    if (redirectTo) {
+      return <Navigate to={redirectTo} replace />
+    }
+
+    return <Navigate to={isAdmin ? '/admin/dashboard' : '/books'} replace />
   }
 
   return children
 }
-

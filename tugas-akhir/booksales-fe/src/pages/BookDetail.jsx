@@ -73,15 +73,20 @@ export default function BookDetail() {
       setFeedback({ type: 'error', message: 'Stok buku ini sedang habis.' })
       return
     }
-    // Langsung arahkan ke checkout hanya untuk buku ini (tanpa menyentuh keranjang belanja)
-    navigate('/checkout', {
-      state: {
-        directItem: {
+
+    try {
+      sessionStorage.setItem(
+        'booksales_direct_buy',
+        JSON.stringify({
           book,
           quantity,
-        },
-      },
-    })
+        })
+      )
+    } catch {
+      // ignore
+    }
+
+    navigate('/checkout')
   }
 
   if (loading) {

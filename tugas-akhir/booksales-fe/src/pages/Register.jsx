@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { User, Mail, Lock, AtSign, Eye, EyeOff, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react'
 
@@ -18,6 +18,9 @@ export default function Register() {
 
   const { register, loading } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  const redirectTo = searchParams.get('redirectto')
 
   const validateField = (field, value, allValues = formData) => {
     let error = ''
@@ -105,7 +108,11 @@ export default function Register() {
     })
 
     if (res.success) {
-      navigate('/books', { replace: true })
+      if (redirectTo) {
+        navigate(redirectTo, { replace: true })
+      } else {
+        navigate('/books', { replace: true })
+      }
     } else {
       setServerError(res.message)
     }
@@ -285,7 +292,10 @@ export default function Register() {
           <div className="mt-6 pt-5 border-t border-hairline text-center">
             <p className="text-xs text-stone">
               Sudah memiliki akun?{' '}
-              <Link to="/login" className="font-medium text-obsidian hover:underline">
+              <Link
+                to={redirectTo ? `/login?redirectto=${encodeURIComponent(redirectTo)}` : '/login'}
+                className="font-medium text-obsidian hover:underline"
+              >
                 Masuk di sini
               </Link>
             </p>
