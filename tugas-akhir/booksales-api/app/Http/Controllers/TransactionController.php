@@ -41,6 +41,11 @@ class TransactionController extends Controller
         $validated = $request->validate([
             'book_id' => 'required|exists:books,id',
             'quantity' => 'required|integer|min:1',
+            'recipient_name' => 'nullable|string|max:100',
+            'phone' => 'nullable|string|max:30',
+            'shipping_address' => 'nullable|string',
+            'notes' => 'nullable|string',
+            'payment_method' => 'nullable|string|max:30',
         ]);
 
         $user = auth('api')->user();
@@ -73,6 +78,11 @@ class TransactionController extends Controller
                 'quantity' => $validated['quantity'],
                 'total_amount' => $totalAmount,
                 'status' => 'pending',
+                'recipient_name' => $validated['recipient_name'] ?? $user->name,
+                'phone' => $validated['phone'] ?? null,
+                'shipping_address' => $validated['shipping_address'] ?? null,
+                'notes' => $validated['notes'] ?? null,
+                'payment_method' => $validated['payment_method'] ?? 'bank_transfer',
             ]);
         });
 

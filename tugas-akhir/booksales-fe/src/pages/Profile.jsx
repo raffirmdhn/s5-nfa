@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import transactionService from '../services/transactionService'
 import BookCover from '../components/common/BookCover'
+import TransactionDetailModal from '../components/common/TransactionDetailModal'
 import {
   User,
   Mail,
@@ -15,12 +16,15 @@ import {
   Clock,
   CheckCircle2,
   Package,
+  Eye,
 } from 'lucide-react'
 
 export default function Profile() {
   const { user, isAdmin, logout } = useAuth()
   const [transactions, setTransactions] = useState([])
   const [loadingOrders, setLoadingOrders] = useState(true)
+  const [selectedTx, setSelectedTx] = useState(null)
+  const [isDetailOpen, setIsDetailOpen] = useState(false)
 
   useEffect(() => {
     async function loadOrders() {
@@ -257,17 +261,40 @@ export default function Profile() {
                   </div>
                 </div>
 
-                <div className="text-left sm:text-right shrink-0">
-                  <span className="text-[10px] text-stone block">Total Pembayaran</span>
-                  <span className="text-sm font-bold font-mono text-obsidian">
-                    {formatPrice(t.total_amount)}
-                  </span>
+                <div className="text-left sm:text-right shrink-0 flex flex-col items-start sm:items-end justify-between gap-2">
+                  <div>
+                    <span className="text-[10px] text-stone block">Total Pembayaran</span>
+                    <span className="text-sm font-bold font-mono text-obsidian">
+                      {formatPrice(t.total_amount)}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedTx(t)
+                      setIsDetailOpen(true)
+                    }}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-medium text-charcoal hover:text-obsidian bg-paper-white border border-hairline hover:border-smoke rounded transition-colors cursor-pointer"
+                  >
+                    <Eye size={12} />
+                    <span>Lihat Rincian</span>
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Transaction Detail & Invoice Modal */}
+      <TransactionDetailModal
+        isOpen={isDetailOpen}
+        onClose={() => {
+          setIsDetailOpen(false)
+          setSelectedTx(null)
+        }}
+        initialData={selectedTx}
+      />
     </div>
   )
 }

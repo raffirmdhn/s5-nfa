@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import transactionService from '../../services/transactionService'
 import DeleteConfirmModal from '../../components/common/DeleteConfirmModal'
+import TransactionDetailModal from '../../components/common/TransactionDetailModal'
 import {
   Search,
   RefreshCw,
@@ -11,6 +12,7 @@ import {
   ShoppingBag,
   Clock,
   Package,
+  Eye,
 } from 'lucide-react'
 
 export default function AdminTransactions() {
@@ -21,6 +23,10 @@ export default function AdminTransactions() {
   const [selectedStatus, setSelectedStatus] = useState('all')
   const [notification, setNotification] = useState(null)
   const [updatingId, setUpdatingId] = useState(null)
+
+  // Detail Modal State
+  const [selectedTx, setSelectedTx] = useState(null)
+  const [isDetailOpen, setIsDetailOpen] = useState(false)
 
   // Delete State
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
@@ -293,14 +299,27 @@ export default function AdminTransactions() {
                       {formatDate(tx.created_at)}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      <button
-                        type="button"
-                        onClick={() => handleOpenDelete(tx)}
-                        title="Hapus Transaksi"
-                        className="p-1.5 text-stone hover:text-red-600 hover:bg-red-50 rounded transition-colors cursor-pointer"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedTx(tx)
+                            setIsDetailOpen(true)
+                          }}
+                          title="Lihat Rincian Faktur"
+                          className="p-1.5 text-stone hover:text-obsidian hover:bg-hairline/60 rounded transition-colors cursor-pointer"
+                        >
+                          <Eye size={14} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleOpenDelete(tx)}
+                          title="Hapus Transaksi"
+                          className="p-1.5 text-stone hover:text-red-600 hover:bg-red-50 rounded transition-colors cursor-pointer"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -309,6 +328,16 @@ export default function AdminTransactions() {
           </table>
         </div>
       </div>
+
+      {/* Detail / Invoice Modal */}
+      <TransactionDetailModal
+        isOpen={isDetailOpen}
+        onClose={() => {
+          setIsDetailOpen(false)
+          setSelectedTx(null)
+        }}
+        initialData={selectedTx}
+      />
 
       {/* Delete Confirmation Modal */}
       <DeleteConfirmModal

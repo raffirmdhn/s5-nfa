@@ -14,6 +14,11 @@ class Transaction extends Model
         'quantity',
         'total_amount',
         'status',
+        'recipient_name',
+        'phone',
+        'shipping_address',
+        'notes',
+        'payment_method',
     ];
 
     protected function casts(): array

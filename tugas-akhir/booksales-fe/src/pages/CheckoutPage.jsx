@@ -74,6 +74,11 @@ export default function CheckoutPage() {
         const payload = {
           book_id: item.book.id,
           quantity: item.quantity,
+          recipient_name: formData.recipientName.trim(),
+          phone: formData.phone.trim() || null,
+          shipping_address: formData.address.trim(),
+          notes: formData.notes.trim() || null,
+          payment_method: paymentMethod,
         }
         const res = await transactionService.createTransaction(payload)
         createdList.push(res)
