@@ -31,22 +31,22 @@ export default function Home() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       {/* Hero Section */}
-      <section className="text-center py-16 sm:py-24 border-b border-hairline">
+      <section className="text-center py-12 sm:py-20 border-b border-hairline">
         <div className="inline-block px-3 py-1 rounded-full bg-paper-white border border-hairline text-stone text-xs font-mono mb-6">
           Praktikum ReactJS Lanjutan · STT Terpadu Nurul Fikri
         </div>
 
-        <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-obsidian max-w-3xl mx-auto leading-tight">
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-obsidian max-w-4xl mx-auto leading-tight">
           Katalog Buku BookSales
         </h1>
 
-        <p className="mt-5 text-sm sm:text-base text-stone max-w-xl mx-auto leading-relaxed">
+        <p className="mt-4 sm:mt-5 text-xs sm:text-base text-stone max-w-xl mx-auto leading-relaxed">
           Temukan berbagai koleksi buku menarik dari beragam kategori dan penulis pilihan.
         </p>
 
-        <div className="mt-8 flex items-center justify-center">
+        <div className="mt-6 sm:mt-8 flex items-center justify-center">
           <Link
             to="/books"
             className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-medium text-pure-white bg-obsidian hover:bg-carbon rounded-md transition-colors shadow-xs"
@@ -58,11 +58,11 @@ export default function Home() {
       </section>
 
       {/* Featured Books Section */}
-      <section className="py-12">
-        <div className="flex items-center justify-between mb-8">
+      <section className="py-8 sm:py-12">
+        <div className="flex items-center justify-between mb-6 sm:mb-8">
           <div>
-            <h2 className="text-xl font-bold tracking-tight text-obsidian">Buku Pilihan</h2>
-            <p className="text-xs text-stone mt-1">Koleksi buku terbaru yang terdaftar dalam sistem.</p>
+            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-obsidian">Buku Pilihan</h2>
+            <p className="text-xs text-stone mt-0.5">Koleksi buku terbaru yang terdaftar dalam sistem.</p>
           </div>
           <Link
             to="/books"
@@ -74,10 +74,10 @@ export default function Home() {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3.5 sm:gap-6">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-pure-white border border-hairline rounded-md p-4 animate-pulse">
-                <div className="h-52 bg-hairline rounded-md mb-3" />
+              <div key={i} className="bg-pure-white border border-hairline rounded-md p-3 sm:p-4 animate-pulse">
+                <div className="h-44 sm:h-52 bg-hairline rounded-md mb-3" />
                 <div className="h-4 bg-hairline rounded mb-2 w-3/4" />
                 <div className="h-3 bg-hairline rounded w-1/2" />
               </div>
@@ -89,7 +89,7 @@ export default function Home() {
             <p className="text-xs">Belum ada buku yang tersedia.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3.5 sm:gap-6">
             {books.map((book) => (
               <Link
                 key={book.id}
@@ -100,27 +100,27 @@ export default function Home() {
                   src={book.cover_photo}
                   title={book.title}
                   author={book.author?.name}
-                  className="h-52 group-hover:scale-[1.02] transition-transform duration-200"
+                  className="h-44 sm:h-52 group-hover:scale-[1.02] transition-transform duration-200"
                 />
-                <div className="p-4 flex-1 flex flex-col justify-between">
+                <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between">
                   <div>
                     {book.genre?.name && (
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-stone mb-1.5 block">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-stone mb-1 block truncate">
                         {book.genre.name}
                       </span>
                     )}
-                    <h3 className="text-sm font-semibold text-obsidian line-clamp-1 group-hover:text-charcoal transition-colors">
+                    <h3 className="text-xs sm:text-sm font-semibold text-obsidian line-clamp-1 group-hover:text-charcoal transition-colors">
                       {book.title}
                     </h3>
-                    <p className="text-xs text-charcoal mt-0.5">
+                    <p className="text-[11px] sm:text-xs text-charcoal mt-0.5 line-clamp-1">
                       {book.author?.name || 'Penulis Tidak Diketahui'}
                     </p>
                   </div>
-                  <div className="pt-3 mt-4 border-t border-hairline flex items-center justify-between">
-                    <span className="text-xs font-semibold text-obsidian">
+                  <div className="pt-2.5 sm:pt-3 mt-3 border-t border-hairline flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                    <span className="text-xs font-bold text-obsidian font-mono">
                       {formatPrice(book.price)}
                     </span>
-                    <span className="text-[10px] font-mono text-stone bg-paper-white px-2 py-0.5 rounded border border-hairline">
+                    <span className="text-[9px] sm:text-[10px] font-mono text-stone bg-paper-white px-1.5 py-0.5 rounded border border-hairline self-start sm:self-auto">
                       Stok: {book.stock ?? 0}
                     </span>
                   </div>

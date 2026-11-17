@@ -49,16 +49,16 @@ export default function Books() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight text-obsidian">Katalog Buku</h1>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-obsidian">Katalog Buku</h1>
         <p className="text-xs text-stone mt-1">
           Daftar seluruh judul buku yang terhubung langsung dengan backend API.
         </p>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-8">
+      <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 mb-6 sm:mb-8">
         <div className="relative flex-1">
           <input
             type="text"
@@ -75,7 +75,7 @@ export default function Books() {
           <select
             value={selectedGenre}
             onChange={(e) => setSelectedGenre(e.target.value)}
-            className="px-3 py-2 text-xs bg-pure-white border border-hairline rounded-md focus:outline-none focus:border-obsidian text-obsidian transition-colors cursor-pointer shadow-xs"
+            className="w-full sm:w-auto px-3 py-2 text-xs bg-pure-white border border-hairline rounded-md focus:outline-none focus:border-obsidian text-obsidian transition-colors cursor-pointer shadow-xs"
           >
             <option value="all">Semua Genre ({books.length})</option>
             {genres.map((g) => (
@@ -89,10 +89,10 @@ export default function Books() {
 
       {/* Book Grid */}
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-pure-white border border-hairline rounded-md p-4 animate-pulse">
-              <div className="h-52 bg-hairline rounded-md mb-3" />
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5 sm:gap-5 lg:gap-6">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div key={i} className="bg-pure-white border border-hairline rounded-md p-3 sm:p-4 animate-pulse">
+              <div className="h-40 sm:h-52 bg-hairline rounded-md mb-3" />
               <div className="h-4 bg-hairline rounded mb-2 w-3/4" />
               <div className="h-3 bg-hairline rounded w-1/2" />
             </div>
@@ -105,7 +105,7 @@ export default function Books() {
           <p className="text-xs mt-1">Coba gunakan filter genre atau kata kunci pencarian yang lain.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5 sm:gap-5 lg:gap-6">
           {filteredBooks.map((book) => (
             <Link
               key={book.id}
@@ -116,32 +116,32 @@ export default function Books() {
                 src={book.cover_photo}
                 title={book.title}
                 author={book.author?.name}
-                className="h-52 group-hover:scale-[1.02] transition-transform duration-200"
+                className="h-44 sm:h-52 group-hover:scale-[1.02] transition-transform duration-200"
               />
-              <div className="p-4 flex-1 flex flex-col justify-between">
+              <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between">
                 <div>
                   {book.genre?.name && (
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-stone mb-1.5 block">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-stone mb-1 block truncate">
                       {book.genre.name}
                     </span>
                   )}
-                  <h3 className="text-sm font-semibold text-obsidian line-clamp-1 group-hover:text-charcoal transition-colors">
+                  <h3 className="text-xs sm:text-sm font-semibold text-obsidian line-clamp-1 group-hover:text-charcoal transition-colors">
                     {book.title}
                   </h3>
-                  <p className="text-xs text-charcoal mt-0.5">
+                  <p className="text-[11px] sm:text-xs text-charcoal mt-0.5 line-clamp-1">
                     {book.author?.name || 'Penulis Tidak Diketahui'}
                   </p>
                   {book.description && (
-                    <p className="text-[11px] text-stone mt-2 line-clamp-2 leading-relaxed">
+                    <p className="text-[10px] sm:text-[11px] text-stone mt-1.5 line-clamp-2 leading-relaxed hidden sm:block">
                       {book.description}
                     </p>
                   )}
                 </div>
-                <div className="pt-3 mt-4 border-t border-hairline flex items-center justify-between">
-                  <span className="text-xs font-semibold text-obsidian">
+                <div className="pt-2.5 sm:pt-3 mt-3 border-t border-hairline flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <span className="text-xs sm:text-xs font-bold text-obsidian font-mono">
                     {formatPrice(book.price)}
                   </span>
-                  <span className="text-[10px] font-mono text-stone bg-paper-white px-2 py-0.5 rounded border border-hairline">
+                  <span className="text-[9px] sm:text-[10px] font-mono text-stone bg-paper-white px-1.5 py-0.5 rounded border border-hairline self-start sm:self-auto">
                     Stok: {book.stock ?? 0}
                   </span>
                 </div>

@@ -147,7 +147,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
       <Link
         to="/cart"
         className="inline-flex items-center gap-1.5 text-xs font-medium text-stone hover:text-obsidian transition-colors mb-6"

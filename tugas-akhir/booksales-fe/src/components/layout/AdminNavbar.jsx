@@ -19,7 +19,7 @@ export default function AdminNavbar() {
   return (
     <header className="sticky top-0 z-40 bg-pure-white border-b border-hairline w-full">
       {/* Top Bar */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link to="/admin/dashboard" className="flex items-center gap-2 text-obsidian font-semibold tracking-tight text-sm">
             <span>▲</span>
@@ -58,7 +58,7 @@ export default function AdminNavbar() {
       </div>
 
       {/* Sub Tabs */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 flex items-center gap-1 border-t border-hairline/50 overflow-x-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1 border-t border-hairline/50 overflow-x-auto">
         {navItems.map((item) => {
           const Icon = item.icon
           const active = isActive(item.path)
