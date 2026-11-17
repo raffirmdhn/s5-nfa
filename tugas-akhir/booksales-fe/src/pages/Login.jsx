@@ -102,13 +102,6 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Akun clue */}
-          <div className="mt-6 pt-5 border-t border-hairline text-center">
-            <div className="text-[11px] text-stone font-mono">
-              admin@gmail.com / password123
-            </div>
-          </div>
-
           {/* Link to Register */}
           <div className="mt-4 text-center">
             <p className="text-xs text-stone">

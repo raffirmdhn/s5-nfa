@@ -16,13 +16,15 @@ class TransactionSeeder extends Seeder
 
         if ($customer && $book) {
             Transaction::firstOrCreate(
-                ['order_number' => 'ORD-001'],
+                ['order_number' => 'BS-261118-INIT-01'],
                 [
                     'customer_id' => $customer->id,
                     'book_id' => $book->id,
                     'quantity' => 1,
                     'total_amount' => $book->price,
                     'status' => 'diproses',
+                    'recipient_name' => $customer->name,
+                    'payment_method' => 'bank_transfer',
                 ]
             );
         }

@@ -27,7 +27,7 @@ class ExampleTest extends TestCase
 
     protected function getUserToken(): string
     {
-        $user = User::where('email', 'user@gmail.com')->first();
+        $user = User::where('email', 'customer@gmail.com')->first();
 
         return auth('api')->login($user);
     }
@@ -48,7 +48,7 @@ class ExampleTest extends TestCase
             'name' => 'Budi Santoso',
             'email' => 'budi@gmail.com',
             'password' => 'secret123',
-            'role' => 'user',
+            'role' => 'customer',
         ]);
 
         $registerResponse->assertStatus(201)

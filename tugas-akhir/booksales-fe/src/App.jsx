@@ -58,7 +58,7 @@ function App() {
             <Route
               path="/checkout"
               element={
-                <ProtectedRoute allowedRoles={['admin', 'customer', 'user']}>
+                <ProtectedRoute allowedRoles={['admin', 'customer']}>
                   <CheckoutPage />
                 </ProtectedRoute>
               }
@@ -66,7 +66,7 @@ function App() {
             <Route
               path="/profile"
               element={
-                <ProtectedRoute allowedRoles={['admin', 'customer', 'user']}>
+                <ProtectedRoute allowedRoles={['admin', 'customer']}>
                   <Profile />
                 </ProtectedRoute>
               }
@@ -79,7 +79,7 @@ function App() {
           <Route
             path="/invoice/:id"
             element={
-              <ProtectedRoute allowedRoles={['admin', 'customer', 'user']}>
+              <ProtectedRoute allowedRoles={['admin', 'customer']}>
                 <InvoicePage />
               </ProtectedRoute>
             }

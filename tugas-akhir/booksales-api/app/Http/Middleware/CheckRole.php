@@ -29,10 +29,6 @@ class CheckRole
             $allowedRoles = array_merge($allowedRoles, explode(',', $role));
         }
 
-        if (in_array('customer', $allowedRoles) && ! in_array('user', $allowedRoles)) {
-            $allowedRoles[] = 'user';
-        }
-
         if (! in_array($user->role, $allowedRoles)) {
             return response()->json([
                 'success' => false,

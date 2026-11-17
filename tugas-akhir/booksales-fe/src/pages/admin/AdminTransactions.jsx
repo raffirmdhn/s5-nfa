@@ -362,7 +362,7 @@ export default function AdminTransactions() {
       {/* Delete Confirmation Modal */}
       <DeleteConfirmModal
         isOpen={isDeleteModalOpen}
-        itemName={txToDelete?.order_number || `ORD-${txToDelete?.id}`}
+        itemName={txToDelete?.order_number || `BS-${txToDelete?.id}`}
         title="Hapus Transaksi"
         description="Apakah Anda yakin ingin menghapus transaksi ini? Stok buku yang dibeli akan otomatis dikembalikan ke sistem."
         loading={deleteLoading}

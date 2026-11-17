@@ -250,13 +250,13 @@ export default function AdminDashboard() {
                 recentTransactions.map((tx) => (
                   <tr key={tx.id} className="hover:bg-paper-white/40 transition-colors">
                     <td className="py-2.5 px-4 font-mono font-bold text-obsidian">
-                      {tx.order_number || `ORD-${tx.id}`}
+                      {tx.order_number || `BS-${tx.id}`}
                     </td>
                     <td className="py-2.5 px-4 font-medium text-obsidian">
-                      {tx.customer?.name || 'Pelanggan'}
+                      {tx.recipient_name || tx.customer?.name || 'Pelanggan'}
                     </td>
                     <td className="py-2.5 px-4 text-charcoal line-clamp-1">
-                      {tx.book?.title || 'Judul Buku'} ({tx.quantity}x)
+                      {tx.items?.[0]?.title || tx.book?.title || 'Judul Buku'} ({tx.total_items || tx.quantity}x)
                     </td>
                     <td className="py-2.5 px-4 font-mono font-medium text-obsidian">
                       {formatPrice(tx.total_amount)}

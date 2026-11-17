@@ -84,7 +84,7 @@ export function AuthProvider({ children }) {
   }
 
   const isAdmin = user?.role === 'admin'
-  const isCustomer = user?.role === 'customer' || user?.role === 'user'
+  const isCustomer = user?.role === 'customer'
   const isGuest = !token
 
   const hasRole = (roles) => {

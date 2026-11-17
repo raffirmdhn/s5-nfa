@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
             ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Admin BookSales',
-                'password' => Hash::make('password123'),
+                'password' => Hash::make('pass123'),
                 'role' => 'admin',
             ]
         );
@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
             ['email' => 'customer@gmail.com'],
             [
                 'name' => 'Customer BookSales',
-                'password' => Hash::make('password123'),
+                'password' => Hash::make('pass123'),
                 'role' => 'customer',
             ]
         );
