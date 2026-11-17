@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import Modal from './Modal'
 import BookCover from './BookCover'
 import transactionService from '../../services/transactionService'
@@ -14,6 +15,7 @@ import {
   User,
   FileText,
   Loader2,
+  ExternalLink,
 } from 'lucide-react'
 
 export default function TransactionDetailModal({ isOpen, onClose, transactionId, initialData = null }) {
@@ -252,15 +254,25 @@ export default function TransactionDetailModal({ isOpen, onClose, transactionId,
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-between pt-3 border-t border-hairline">
-            <button
-              type="button"
-              onClick={handlePrint}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-charcoal hover:text-obsidian bg-paper-white border border-hairline hover:border-smoke rounded-md transition-colors cursor-pointer"
-            >
-              <Printer size={13} />
-              <span>Cetak Faktur</span>
-            </button>
+          <div className="flex items-center justify-between pt-3 border-t border-hairline flex-wrap gap-2">
+            <div className="flex items-center gap-2">
+              <Link
+                to={`/invoice/${transaction.id}`}
+                target="_blank"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-obsidian bg-paper-white border border-hairline hover:border-smoke rounded-md transition-colors"
+              >
+                <ExternalLink size={13} />
+                <span>Buka Faktur Halaman Penuh</span>
+              </Link>
+              <button
+                type="button"
+                onClick={handlePrint}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-charcoal hover:text-obsidian bg-paper-white border border-hairline hover:border-smoke rounded-md transition-colors cursor-pointer"
+              >
+                <Printer size={13} />
+                <span>Cetak</span>
+              </button>
+            </div>
 
             <button
               type="button"

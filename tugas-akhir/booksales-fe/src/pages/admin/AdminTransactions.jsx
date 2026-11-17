@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import transactionService from '../../services/transactionService'
 import DeleteConfirmModal from '../../components/common/DeleteConfirmModal'
 import TransactionDetailModal from '../../components/common/TransactionDetailModal'
@@ -13,6 +14,7 @@ import {
   Clock,
   Package,
   Eye,
+  Printer,
 } from 'lucide-react'
 
 export default function AdminTransactions() {
@@ -300,13 +302,21 @@ export default function AdminTransactions() {
                     </td>
                     <td className="py-3 px-4 text-right">
                       <div className="flex items-center justify-end gap-1">
+                        <Link
+                          to={`/invoice/${tx.id}`}
+                          target="_blank"
+                          title="Buka Faktur Resmi Fullpage (Tokopedia style)"
+                          className="p-1.5 text-stone hover:text-emerald-700 hover:bg-emerald-50 rounded transition-colors"
+                        >
+                          <Printer size={14} />
+                        </Link>
                         <button
                           type="button"
                           onClick={() => {
                             setSelectedTx(tx)
                             setIsDetailOpen(true)
                           }}
-                          title="Lihat Rincian Faktur"
+                          title="Lihat Rincian Cepat"
                           className="p-1.5 text-stone hover:text-obsidian hover:bg-hairline/60 rounded transition-colors cursor-pointer"
                         >
                           <Eye size={14} />

@@ -14,6 +14,7 @@ import CheckoutPage from './pages/CheckoutPage'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Profile from './pages/Profile'
+import InvoicePage from './pages/InvoicePage'
 import NotFound from './pages/NotFound'
 
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -73,6 +74,16 @@ function App() {
 
             <Route path="*" element={<NotFound />} />
           </Route>
+
+          {/* Dedicated Fullpage Official Invoice */}
+          <Route
+            path="/invoice/:id"
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'customer', 'user']}>
+                <InvoicePage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Protected Admin-Only Routes */}
           <Route

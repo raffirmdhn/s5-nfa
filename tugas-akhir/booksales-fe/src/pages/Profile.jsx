@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   Package,
   Eye,
+  FileText,
 } from 'lucide-react'
 
 export default function Profile() {
@@ -268,17 +269,28 @@ export default function Profile() {
                       {formatPrice(t.total_amount)}
                     </span>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedTx(t)
-                      setIsDetailOpen(true)
-                    }}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-medium text-charcoal hover:text-obsidian bg-paper-white border border-hairline hover:border-smoke rounded transition-colors cursor-pointer"
-                  >
-                    <Eye size={12} />
-                    <span>Lihat Rincian</span>
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    <Link
+                      to={`/invoice/${t.id}`}
+                      target="_blank"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 rounded transition-colors"
+                      title="Buka Faktur Resmi Fullpage"
+                    >
+                      <FileText size={12} />
+                      <span>Faktur</span>
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedTx(t)
+                        setIsDetailOpen(true)
+                      }}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-charcoal hover:text-obsidian bg-paper-white border border-hairline hover:border-smoke rounded transition-colors cursor-pointer"
+                    >
+                      <Eye size={12} />
+                      <span>Rincian</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
