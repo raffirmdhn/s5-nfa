@@ -21,7 +21,7 @@ class TransactionController extends Controller
             ], 401);
         }
 
-        $query = Transaction::with(['customer', 'book'])->latest();
+        $query = Transaction::with(['customer', 'book.author', 'book.genre'])->latest();
 
         if ($user->role !== 'admin') {
             $query->where('customer_id', $user->id);
@@ -96,13 +96,13 @@ class TransactionController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Transaksi berhasil dibuat',
-            'data' => $transaction->load(['customer', 'book']),
+            'data' => $transaction->load(['customer', 'book.author', 'book.genre']),
         ], 201);
     }
 
     public function show(string $id): JsonResponse
     {
-        $transaction = Transaction::with(['customer', 'book'])->find($id);
+        $transaction = Transaction::with(['customer', 'book.author', 'book.genre'])->find($id);
 
         if (! $transaction) {
             return response()->json([
@@ -164,7 +164,7 @@ class TransactionController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Status transaksi berhasil diperbarui',
-                'data' => $transaction->load(['customer', 'book']),
+                'data' => $transaction->load(['customer', 'book.author', 'book.genre']),
             ], 200);
         }
 

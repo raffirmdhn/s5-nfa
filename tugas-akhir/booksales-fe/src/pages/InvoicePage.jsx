@@ -32,11 +32,11 @@ export default function InvoicePage() {
   }, [id])
 
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
+    const formatted = new Intl.NumberFormat('id-ID', {
       minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     }).format(price || 0)
+    return `Rp.${formatted}`
   }
 
   const formatDate = (dateString) => {
@@ -72,27 +72,27 @@ export default function InvoicePage() {
     }
   }
 
-  // Watermark stempel dinamis sesuai status transaksi
+  // Watermark stempel dinamis mirip Tokopedia (dengan border rounded dan teks stempel miring)
   const renderWatermark = (status) => {
     const s = String(status || 'pending').toLowerCase()
     let text = 'BELUM LUNAS'
-    let style = 'border-stone-400/35 text-stone-500/35'
+    let color = 'border-stone-400/20 text-stone-400/20'
 
     if (s === 'selesai') {
       text = 'SUDAH LUNAS'
-      style = 'border-emerald-600/35 text-emerald-600/35'
+      color = 'border-[#03AC0E]/25 text-[#03AC0E]/25'
     } else if (s === 'dikirim') {
       text = 'DIKIRIM'
-      style = 'border-blue-500/35 text-blue-500/35'
+      color = 'border-blue-500/25 text-blue-500/25'
     } else if (s === 'diproses') {
       text = 'DIPROSES'
-      style = 'border-amber-500/35 text-amber-500/35'
+      color = 'border-amber-500/25 text-amber-500/25'
     }
 
     return (
       <div className="pointer-events-none select-none absolute inset-0 flex items-center justify-center z-0">
         <div
-          className={`transform -rotate-25 border-4 border-dashed rounded-2xl px-8 py-3.5 text-3xl sm:text-5xl font-black font-mono tracking-widest ${style}`}
+          className={`transform -rotate-25 border-4 rounded-3xl px-10 py-4 text-4xl sm:text-6xl font-black font-sans tracking-widest uppercase ${color}`}
         >
           {text}
         </div>
@@ -105,7 +105,7 @@ export default function InvoicePage() {
       <div className="min-h-screen bg-paper-white flex items-center justify-center text-stone">
         <div className="text-center">
           <Loader2 size={32} className="mx-auto animate-spin mb-3 text-obsidian" />
-          <p className="text-xs font-mono">Memuat faktur resmi BookSales...</p>
+          <p className="text-xs font-mono">Memuat faktur resmi...</p>
         </div>
       </div>
     )
@@ -133,16 +133,7 @@ export default function InvoicePage() {
   return (
     <div className="min-h-screen bg-[#F3F4F6] py-6 sm:py-10 px-4 print:bg-white print:p-0 print:m-0">
       {/* Floating Action Bar (Hidden when printing) */}
-      <div className="max-w-3xl mx-auto mb-6 flex items-center justify-between print:hidden">
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-charcoal hover:text-obsidian bg-white border border-hairline rounded-md hover:bg-paper-white transition-colors cursor-pointer shadow-xs"
-        >
-          <ArrowLeft size={14} />
-          <span>Kembali</span>
-        </button>
-
+      <div className="max-w-3xl mx-auto mb-6 flex items-center justify-end print:hidden">
         <button
           type="button"
           onClick={() => window.print()}
@@ -154,92 +145,101 @@ export default function InvoicePage() {
       </div>
 
       {/* Invoice Paper Document (Tokopedia style layout) */}
-      <div className="max-w-3xl mx-auto bg-white border border-hairline rounded-xl p-6 sm:p-10 shadow-sm relative overflow-hidden print:border-0 print:shadow-none print:p-0 print:max-w-none print:rounded-none">
+      <div className="max-w-3xl mx-auto bg-white border border-hairline rounded-xl p-8 sm:p-12 shadow-sm relative overflow-hidden print:border-0 print:shadow-none print:p-0 print:max-w-none print:rounded-none">
         {/* Dynamic Watermark Stamp */}
         {renderWatermark(transaction.status)}
 
         {/* Content Container (Layered above watermark) */}
         <div className="relative z-10 space-y-6">
-          {/* Header Brand */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-hairline pb-5 gap-3">
+          {/* Header Brand Tokopedia style */}
+          <div className="flex items-center justify-between border-b border-hairline/60 pb-5">
             <div className="flex items-center gap-2">
-              <span className="text-emerald-700 font-bold text-xl tracking-tight">▲ booksales</span>
-              <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">
-                Official Receipt
+              <span className="text-[#03AC0E] font-extrabold text-2xl tracking-tight font-sans">
+                booksales
               </span>
             </div>
-
-            <div className="text-right">
-              <span className="text-xs font-mono uppercase tracking-widest text-stone block">
-                FAKTUR PEMBELIAN
-              </span>
-              <span className="text-xs font-mono text-obsidian font-bold">
-                {transaction.order_number || `ORD-${transaction.id}`}
-              </span>
-            </div>
+            <span className="text-[11px] font-mono text-stone uppercase tracking-widest">
+              {transaction.order_number || `ORD-${transaction.id}`}
+            </span>
           </div>
 
-          {/* Metadata Section: Invoice Info & Customer Info */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs text-charcoal">
+          {/* Metadata Grid (Tokopedia style: aligned labels and values, no line wrapping) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-8 text-xs text-charcoal pt-1">
             {/* Left: Nomor Invoice & Tanggal */}
-            <div className="space-y-1.5">
-              <div className="flex">
-                <span className="w-28 text-stone">Nomor Invoice</span>
-                <span className="font-mono font-medium text-emerald-700">: {getInvoiceCode(transaction)}</span>
-              </div>
-              <div className="flex">
-                <span className="w-28 text-stone">Tanggal Transaksi</span>
-                <span className="font-mono text-obsidian">: {formatDate(transaction.created_at)}</span>
-              </div>
-              <div className="flex">
-                <span className="w-28 text-stone">Pembayaran</span>
-                <span className="font-medium text-obsidian">: {getPaymentLabel(transaction.payment_method)}</span>
-              </div>
-            </div>
+            <table className="border-collapse text-xs w-full">
+              <tbody>
+                <tr>
+                  <td className="py-1 pr-2 text-stone whitespace-nowrap align-top w-28 font-medium">Nomor Invoice</td>
+                  <td className="py-1 px-1 text-stone align-top w-3">:</td>
+                  <td className="py-1 text-[#03AC0E] font-mono font-bold whitespace-nowrap align-top">
+                    {getInvoiceCode(transaction)}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="py-1 pr-2 text-stone whitespace-nowrap align-top font-medium">Tanggal</td>
+                  <td className="py-1 px-1 text-stone align-top">:</td>
+                  <td className="py-1 text-obsidian align-top">
+                    {formatDate(transaction.created_at)}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="py-1 pr-2 text-stone whitespace-nowrap align-top font-medium">Pembayaran</td>
+                  <td className="py-1 px-1 text-stone align-top">:</td>
+                  <td className="py-1 text-obsidian align-top">
+                    {getPaymentLabel(transaction.payment_method)}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
 
-            {/* Right: Diterbitkan Untuk (Kepada) */}
-            <div className="space-y-1.5 sm:border-l sm:border-hairline sm:pl-6">
-              <div className="flex items-start">
-                <span className="w-16 text-stone shrink-0">Kepada</span>
-                <span className="font-semibold text-obsidian">
-                  : {transaction.recipient_name || transaction.customer?.name || 'Pelanggan'}
-                </span>
-              </div>
-              {transaction.phone && (
-                <div className="flex items-start">
-                  <span className="w-16 text-stone shrink-0">Telepon</span>
-                  <span className="font-mono text-obsidian">: {transaction.phone}</span>
-                </div>
-              )}
-              <div className="flex items-start">
-                <span className="w-16 text-stone shrink-0">Alamat</span>
-                <span className="text-obsidian leading-relaxed">
-                  : {transaction.shipping_address || 'Ambil di Toko / Alamat Tidak Dicantumkan'}
-                </span>
-              </div>
-            </div>
+            {/* Right: Kepada & Alamat */}
+            <table className="border-collapse text-xs w-full">
+              <tbody>
+                <tr>
+                  <td className="py-1 pr-2 text-stone whitespace-nowrap align-top w-16 font-medium">Kepada</td>
+                  <td className="py-1 px-1 text-stone align-top w-3">:</td>
+                  <td className="py-1 text-obsidian font-semibold align-top">
+                    {transaction.recipient_name || transaction.customer?.name || 'Pelanggan'}
+                  </td>
+                </tr>
+                {transaction.phone && (
+                  <tr>
+                    <td className="py-1 pr-2 text-stone whitespace-nowrap align-top font-medium">Telepon</td>
+                    <td className="py-1 px-1 text-stone align-top">:</td>
+                    <td className="py-1 text-obsidian font-mono align-top">
+                      {transaction.phone}
+                    </td>
+                  </tr>
+                )}
+                <tr>
+                  <td className="py-1 pr-2 text-stone whitespace-nowrap align-top font-medium">Alamat</td>
+                  <td className="py-1 px-1 text-stone align-top">:</td>
+                  <td className="py-1 text-charcoal leading-relaxed align-top">
+                    {transaction.shipping_address || 'Ambil di Toko / Alamat Tidak Dicantumkan'}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          {/* Table Section */}
-          <div className="border-t border-hairline pt-4">
+          {/* Table Section: Nama Produk & Jumlah (IDR) like Tokopedia */}
+          <div className="border-t border-hairline/80 pt-5">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
+              <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="border-b-2 border-hairline bg-paper-white/50 text-obsidian font-semibold">
-                    <th className="py-2.5 px-3">Nama Produk</th>
-                    <th className="py-2.5 px-3 w-20 text-center">Qty</th>
-                    <th className="py-2.5 px-3 w-32 text-right">Harga Satuan</th>
-                    <th className="py-2.5 px-3 w-36 text-right">Jumlah (IDR)</th>
+                  <tr className="border-b border-hairline bg-[#F9FAFB] text-obsidian font-bold">
+                    <th className="py-2.5 px-4 text-left">Nama Produk</th>
+                    <th className="py-2.5 px-4 text-right">Jumlah (IDR)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-hairline">
                   <tr>
-                    <td className="py-3 px-3">
-                      <div className="font-semibold text-obsidian">
+                    <td className="py-3.5 px-4">
+                      <div className="font-semibold text-obsidian text-xs">
                         {transaction.book?.title || 'Judul Buku'}
                       </div>
-                      <div className="text-[11px] text-stone">
-                        Penulis: {transaction.book?.author?.name || 'Penulis Tidak Diketahui'}
+                      <div className="text-[11px] text-stone mt-0.5">
+                        Penulis: {transaction.book?.author?.name || 'Penulis Tidak Diketahui'} · {transaction.quantity} x {formatPrice(transaction.book?.price || 0)}
                       </div>
                       {transaction.notes && (
                         <div className="text-[10px] text-stone mt-1 italic">
@@ -247,13 +247,7 @@ export default function InvoicePage() {
                         </div>
                       )}
                     </td>
-                    <td className="py-3 px-3 text-center font-mono font-medium text-obsidian">
-                      {transaction.quantity}
-                    </td>
-                    <td className="py-3 px-3 text-right font-mono text-obsidian">
-                      {formatPrice(transaction.book?.price || 0)}
-                    </td>
-                    <td className="py-3 px-3 text-right font-mono font-semibold text-obsidian">
+                    <td className="py-3.5 px-4 text-right font-mono font-medium text-obsidian whitespace-nowrap">
                       {formatPrice(transaction.total_amount)}
                     </td>
                   </tr>
@@ -261,7 +255,7 @@ export default function InvoicePage() {
               </table>
             </div>
 
-            {/* Calculations Breakdown */}
+            {/* Calculations Breakdown (Tokopedia Style) */}
             <div className="mt-4 flex flex-col items-end space-y-2 text-xs">
               <div className="w-full sm:w-80 flex justify-between py-1 border-t border-hairline text-stone">
                 <span className="font-semibold text-obsidian">Subtotal</span>
@@ -271,16 +265,16 @@ export default function InvoicePage() {
               </div>
 
               <div className="w-full sm:w-80 flex justify-between py-1 text-stone">
-                <span>Biaya Pengiriman (Bebas Ongkir)</span>
-                <span className="font-mono text-obsidian">Rp 0,00</span>
+                <span>Biaya Layanan Bebas Ongkir</span>
+                <span className="font-mono text-obsidian">Rp.0,00</span>
               </div>
 
-              {/* Tokopedia-like Highlighted Total Box */}
-              <div className="w-full sm:w-80 border-2 border-obsidian rounded-md p-3 flex justify-between items-center bg-white shadow-xs">
+              {/* Tokopedia Highlighted Total Bayar Box */}
+              <div className="w-full sm:w-80 border-2 border-hairline rounded-md p-3 flex justify-between items-center bg-white shadow-xs">
                 <span className="text-xs font-bold text-obsidian uppercase tracking-wider">
                   Total Bayar
                 </span>
-                <span className="text-base font-black font-mono text-obsidian">
+                <span className="text-base font-extrabold font-mono text-obsidian">
                   {formatPrice(transaction.total_amount)}
                 </span>
               </div>
@@ -288,15 +282,15 @@ export default function InvoicePage() {
           </div>
 
           {/* Important Information Section */}
-          <div className="border-t border-hairline pt-6 text-[11px] text-stone space-y-1.5 leading-relaxed">
+          <div className="border-t border-hairline/80 pt-6 text-[11px] text-stone space-y-1.5 leading-relaxed">
             <p className="font-semibold text-obsidian">Informasi Penting:</p>
-            <ul className="list-disc list-inside space-y-1 pl-1">
-              <li>Invoice ini berfungsi sebagai tanda terima pembayaran pemesanan yang sah.</li>
+            <ul className="list-disc list-inside space-y-1 pl-1 text-[11px]">
+              <li>Invoice ini berfungsi sebagai tanda terima pembayaran yang sah.</li>
               <li>
-                Diterbitkan secara elektronik oleh sistem resmi <strong>BookSales · STT Terpadu Nurul Fikri</strong>.
+                Diterbitkan secara elektronik oleh sistem <strong>BookSales · STT Terpadu Nurul Fikri</strong>.
               </li>
               <li>
-                Jika memerlukan konfirmasi pengiriman atau bantuan lebih lanjut, silakan hubungi pengelola toko dengan menyertakan Nomor Invoice di atas.
+                Dalam hal terdapat pertanyaan mengenai invoice ini, silakan hubungi pengelola toko BookSales dengan menyertakan Nomor Invoice di atas.
               </li>
             </ul>
           </div>
