@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import transactionService from '../services/transactionService'
 import { Printer, ArrowLeft, Loader2, AlertCircle } from 'lucide-react'
 
 export default function InvoicePage() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const isAutoPrint = searchParams.get('autoprint') === '1' || searchParams.get('autoprint') === 'true'
 
   const [transaction, setTransaction] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -44,6 +46,30 @@ export default function InvoicePage() {
       }
     }
   }, [transaction])
+
+  // Auto-print dan auto-close tab ketika dibuka dengan query ?autoprint=1
+  useEffect(() => {
+    if (!loading && transaction && isAutoPrint) {
+      const invoiceNumber = (transaction.invoice_code || getInvoiceCode(transaction)).replace(/\//g, '-')
+      document.title = `Invoice-${invoiceNumber}`
+
+      const handleAfterPrint = () => {
+        window.close()
+      }
+
+      window.addEventListener('afterprint', handleAfterPrint)
+
+      // Jeda singkat agar DOM dan rendering faktur siap sebelum dialog cetak browser muncul
+      const timer = setTimeout(() => {
+        window.print()
+      }, 500)
+
+      return () => {
+        clearTimeout(timer)
+        window.removeEventListener('afterprint', handleAfterPrint)
+      }
+    }
+  }, [loading, transaction, isAutoPrint])
 
   const formatPrice = (price) => {
     const formatted = new Intl.NumberFormat('id-ID', {
@@ -325,7 +351,7 @@ export default function InvoicePage() {
             <ul className="list-disc list-inside space-y-1 pl-1 text-[11px]">
               <li>Invoice ini berfungsi sebagai tanda terima pembayaran yang sah.</li>
               <li>
-                Diterbitkan secara elektronik oleh sistem <strong>BookSales · STT Terpadu Nurul Fikri</strong>.
+                Diterbitkan secara elektronik oleh sistem <strong>BookSales</strong>.
               </li>
               <li>
                 Dalam hal terdapat pertanyaan mengenai invoice ini, silakan hubungi pengelola toko BookSales dengan menyertakan Nomor Invoice di atas.

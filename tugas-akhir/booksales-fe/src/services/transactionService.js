@@ -1,8 +1,8 @@
 import api from './api'
 
 export const transactionService = {
-  async getTransactions() {
-    const response = await api.get('/transactions')
+  async getTransactions(params = {}) {
+    const response = await api.get('/transactions', { params })
     return response.data?.data || []
   },
 

@@ -2,10 +2,10 @@ import { Navigate, useLocation, Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
 export default function ProtectedRoute({ children, allowedRoles = null, requireAdmin = false }) {
-  const { isAuthenticated, user, hasRole, isAdmin, loading } = useAuth()
+  const { isAuthenticated, user, hasRole, isAdmin, initialLoading } = useAuth()
   const location = useLocation()
 
-  if (loading) {
+  if (initialLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-paper-white text-stone text-sm">
         Memuat...

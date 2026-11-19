@@ -2,10 +2,10 @@ import { Navigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
 export default function GuestRoute({ children }) {
-  const { isAuthenticated, isAdmin, loading } = useAuth()
+  const { isAuthenticated, isAdmin, initialLoading } = useAuth()
   const [searchParams] = useSearchParams()
 
-  if (loading) {
+  if (initialLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-paper-white text-stone text-sm">
         Memuat...

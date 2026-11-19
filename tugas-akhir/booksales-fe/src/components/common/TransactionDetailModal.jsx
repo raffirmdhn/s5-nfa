@@ -15,6 +15,7 @@ import {
   FileText,
   Loader2,
   ExternalLink,
+  Printer,
 } from 'lucide-react'
 
 export default function TransactionDetailModal({ isOpen, onClose, transactionId, initialData = null }) {
@@ -272,14 +273,15 @@ export default function TransactionDetailModal({ isOpen, onClose, transactionId,
 
           {/* Action Buttons */}
           <div className="flex items-center justify-between pt-3 border-t border-hairline flex-wrap gap-2">
-            <Link
-              to={`/invoice/${transaction.order_number || transaction.id}`}
-              target="_blank"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-obsidian bg-paper-white border border-hairline hover:border-smoke rounded-md transition-colors"
+            <button
+              type="button"
+              onClick={() => window.open(`/invoice/${transaction.order_number || transaction.id}?autoprint=1`, '_blank')}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-obsidian bg-paper-white border border-hairline hover:border-smoke rounded-md transition-colors cursor-pointer"
+              title="Cetak Faktur (Auto Print & Close)"
             >
-              <ExternalLink size={13} />
-              <span>Buka Faktur Halaman Penuh</span>
-            </Link>
+              <Printer size={13} />
+              <span>Cetak Faktur</span>
+            </button>
 
             <button
               type="button"

@@ -10,9 +10,13 @@ export function AuthProvider({ children }) {
   })
   const [token, setToken] = useState(() => localStorage.getItem('token') || null)
   const [loading, setLoading] = useState(false)
+  const [initialLoading, setInitialLoading] = useState(() => {
+    return Boolean(localStorage.getItem('token') && !localStorage.getItem('user'))
+  })
 
   useEffect(() => {
     if (token && !user) {
+      setInitialLoading(true)
       authService
         .getMe()
         .then((res) => {
@@ -23,6 +27,9 @@ export function AuthProvider({ children }) {
         })
         .catch(() => {
           logout()
+        })
+        .finally(() => {
+          setInitialLoading(false)
         })
     }
   }, [token])
@@ -101,6 +108,7 @@ export function AuthProvider({ children }) {
         user,
         token,
         loading,
+        initialLoading,
         login,
         register,
         logout,

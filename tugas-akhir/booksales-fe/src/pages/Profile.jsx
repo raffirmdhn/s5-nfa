@@ -30,7 +30,7 @@ export default function Profile() {
   useEffect(() => {
     async function loadOrders() {
       try {
-        const data = await transactionService.getTransactions()
+        const data = await transactionService.getTransactions({ mine: true })
         setTransactions(data)
       } catch {
         setTransactions([])
@@ -279,15 +279,15 @@ export default function Profile() {
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <Link
-                        to={`/invoice/${t.order_number || t.id}`}
-                        target="_blank"
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 rounded transition-colors"
-                        title="Buka Faktur Resmi Fullpage"
+                      <button
+                        type="button"
+                        onClick={() => window.open(`/invoice/${t.order_number || t.id}?autoprint=1`, '_blank')}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 rounded transition-colors cursor-pointer"
+                        title="Cetak Faktur (Auto Print & Close)"
                       >
                         <FileText size={12} />
                         <span>Faktur</span>
-                      </Link>
+                      </button>
                       <button
                         type="button"
                         onClick={() => {

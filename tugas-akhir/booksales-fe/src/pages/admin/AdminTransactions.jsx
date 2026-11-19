@@ -312,14 +312,14 @@ export default function AdminTransactions() {
                     </td>
                     <td className="py-3 px-4 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <Link
-                          to={`/invoice/${tx.order_number || tx.id}`}
-                          target="_blank"
-                          title="Buka Faktur Resmi Fullpage (Tokopedia style)"
-                          className="p-1.5 text-stone hover:text-emerald-700 hover:bg-emerald-50 rounded transition-colors"
+                        <button
+                          type="button"
+                          onClick={() => window.open(`/invoice/${tx.order_number || tx.id}?autoprint=1`, '_blank')}
+                          title="Cetak Faktur (Auto Print & Close)"
+                          className="p-1.5 text-stone hover:text-emerald-700 hover:bg-emerald-50 rounded transition-colors cursor-pointer"
                         >
                           <Printer size={14} />
-                        </Link>
+                        </button>
                         <button
                           type="button"
                           onClick={() => {

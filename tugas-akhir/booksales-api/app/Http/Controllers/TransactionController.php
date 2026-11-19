@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 
 class TransactionController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $user = auth('api')->user();
 
@@ -25,7 +25,7 @@ class TransactionController extends Controller
 
         $query = Transaction::with(['customer', 'book.author', 'book.genre'])->latest();
 
-        if ($user->role !== 'admin') {
+        if ($user->role !== 'admin' || $request->boolean('mine')) {
             $query->where('customer_id', $user->id);
         }
 

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { Lock, Mail, ArrowRight, Loader2 } from 'lucide-react'
+import { Lock, Mail, ArrowRight, Loader2, AlertCircle } from 'lucide-react'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -45,8 +45,9 @@ export default function Login() {
 
         <div className="bg-pure-white p-7 rounded-lg border border-hairline shadow-sm">
           {error && (
-            <div className="mb-5 p-3 text-xs bg-red-50 text-red-700 border border-red-200 rounded-md">
-              {error}
+            <div className="mb-5 p-3 text-xs bg-red-50 text-red-700 border border-red-200 rounded-md flex items-center gap-2">
+              <AlertCircle size={15} className="shrink-0 text-red-600" />
+              <span>{error}</span>
             </div>
           )}
 

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { User, Mail, Lock, AtSign, Eye, EyeOff, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react'
+import { User, Mail, Lock, AtSign, Eye, EyeOff, ArrowRight, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -133,8 +133,9 @@ export default function Register() {
 
         <div className="bg-pure-white p-7 rounded-lg border border-hairline shadow-sm">
           {serverError && (
-            <div className="mb-5 p-3 text-xs bg-red-50 text-red-700 border border-red-200 rounded-md">
-              {serverError}
+            <div className="mb-5 p-3 text-xs bg-red-50 text-red-700 border border-red-200 rounded-md flex items-center gap-2">
+              <AlertCircle size={15} className="shrink-0 text-red-600" />
+              <span>{serverError}</span>
             </div>
           )}
 

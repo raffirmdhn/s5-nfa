@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
 import transactionService from '../services/transactionService'
 import BookCover from '../components/common/BookCover'
-import { CheckCircle2, AlertCircle, ArrowLeft, Loader2, CreditCard, QrCode, Truck, Zap } from 'lucide-react'
+import { CheckCircle2, AlertCircle, ArrowLeft, Loader2, CreditCard, QrCode, Truck, Zap, Printer } from 'lucide-react'
 
 export default function CheckoutPage() {
   const { user } = useAuth()
@@ -187,13 +187,15 @@ export default function CheckoutPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              to={`/invoice/${completedOrder.order_number || completedOrder.id}`}
-              target="_blank"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-medium bg-[#03AC0E] text-pure-white rounded-md hover:bg-[#02910c] transition-colors shadow-xs"
+            <button
+              type="button"
+              onClick={() => window.open(`/invoice/${completedOrder.order_number || completedOrder.id}?autoprint=1`, '_blank')}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-medium bg-[#03AC0E] text-pure-white rounded-md hover:bg-[#02910c] transition-colors shadow-xs cursor-pointer"
+              title="Cetak Faktur (Auto Print & Close)"
             >
-              <span>Buka Faktur Resmi</span>
-            </Link>
+              <Printer size={14} />
+              <span>Cetak Faktur Resmi</span>
+            </button>
             <Link
               to="/profile"
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-medium bg-obsidian text-pure-white rounded-md hover:bg-carbon transition-colors shadow-xs"
